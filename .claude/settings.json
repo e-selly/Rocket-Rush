@@ -9,5 +9,16 @@
   },
   "enabledPlugins": {
     "hyperframes@hyperframes": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "mcp__ElevenLabs",
+      "mcp__github"
+    ]
   }
 }
