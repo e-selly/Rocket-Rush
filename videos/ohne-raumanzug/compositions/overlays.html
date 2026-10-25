@@ -1,0 +1,110 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      font-family: "Inter", sans-serif;
+      color: #ffffff;
+    }
+    .ov {
+      position: absolute;
+      left: 0;
+      width: 1080px;
+      text-align: center;
+    }
+    .shadow {
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.85);
+    }
+    .kicker {
+      font-weight: 700;
+      font-size: 42px;
+      letter-spacing: 0.22em;
+      color: #8fdbff;
+    }
+    .headline {
+      font-weight: 900;
+      font-size: 108px;
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+    }
+    .big {
+      font-weight: 900;
+      font-size: 180px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .sub {
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1.3;
+      letter-spacing: 0.14em;
+      color: #d8e6f2;
+    }
+    .amber {
+      color: #ffb547;
+    }
+    .ice {
+      color: #8fdbff;
+    }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="35">
+    <div id="ov-hook" class="ov clip" data-start="0" data-duration="1.75" data-track-index="2" style="top: 230px">
+      <div id="ov-hook-k" class="kicker shadow">GEDANKENEXPERIMENT</div>
+      <div id="ov-hook-h" class="headline shadow" style="margin-top: 18px">OHNE<br /><span class="amber">RAUMANZUG</span><br />IM ALL?</div>
+    </div>
+
+    <div id="ov-boil" class="ov clip" data-start="9.3" data-duration="2.3" data-track-index="2" style="top: 250px">
+      <div id="ov-boil-t" class="sub shadow">UNTER 6,3 kPa SIEDET WASSER<br /><span class="ice">SCHON BEI 37 °C</span></div>
+    </div>
+
+    <div id="ov-sec" class="ov clip" data-start="14.2" data-duration="2.7" data-track-index="2" style="top: 280px">
+      <div id="ov-sec-n" class="big shadow amber">10–15 s</div>
+      <div id="ov-sec-s" class="sub shadow" style="margin-top: 14px">BIS ZUR BEWUSSTLOSIGKEIT</div>
+    </div>
+
+    <div id="ov-cold" class="ov clip" data-start="17.0" data-duration="2.2" data-track-index="2" style="top: 300px">
+      <div id="ov-cold-n" class="big shadow ice">−270 °C</div>
+      <div id="ov-cold-s" class="sub shadow" style="margin-top: 14px">TEMPERATUR DES WELTALLS</div>
+    </div>
+
+    <div id="ov-heat" class="ov clip" data-start="19.4" data-duration="3.0" data-track-index="2" style="top: 250px">
+      <div id="ov-heat-k" class="kicker shadow amber">WÄRMEBILD · SIMULIERT</div>
+      <div id="ov-heat-s" class="sub shadow" style="margin-top: 22px">KEINE LUFT = KEINE WÄRMELEITUNG<br />NUR LANGSAME ABSTRAHLUNG</div>
+    </div>
+
+    <div id="ov-end" class="ov clip" data-start="25.6" data-duration="9.4" data-track-index="2" style="top: 620px">
+      <div id="ov-end-k" class="kicker shadow">FOLGE FÜR MEHR</div>
+      <div id="ov-end-h" class="headline shadow" style="margin-top: 22px">GEDANKEN-<br /><span class="amber">EXPERIMENT</span></div>
+      <div id="ov-end-s" class="sub shadow" style="margin-top: 30px">UNGLAUBLICHE WISSENSCHAFTSFRAGEN</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const enter = { duration: 0.3, ease: "power3.out" };
+      tl.fromTo("#ov-hook-h", { opacity: 1, scale: 1 }, { opacity: 1, scale: 1.04, duration: 1.7, ease: "none" }, 0);
+      tl.to("#ov-hook", { opacity: 0, duration: 0.12, ease: "power2.in" }, 1.6);
+
+      tl.fromTo("#ov-boil-t", { opacity: 0, y: 20 }, { opacity: 1, y: 0, ...enter }, 9.3);
+      tl.to("#ov-boil-t", { opacity: 0, duration: 0.15, ease: "power2.in" }, 11.45);
+
+      tl.fromTo("#ov-sec-n", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 14.2);
+      tl.fromTo("#ov-sec-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 14.45);
+      tl.to("#ov-sec", { opacity: 0, duration: 0.15, ease: "power2.in" }, 16.75);
+
+      tl.fromTo("#ov-cold-n", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 17.0);
+      tl.fromTo("#ov-cold-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 17.25);
+      tl.to("#ov-cold", { opacity: 0, duration: 0.15, ease: "power2.in" }, 19.05);
+
+      tl.fromTo("#ov-heat-k", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 19.4);
+      tl.fromTo("#ov-heat-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 19.75);
+      tl.to("#ov-heat", { opacity: 0, duration: 0.15, ease: "power2.in" }, 22.25);
+
+      tl.fromTo("#ov-end-k", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 25.7);
+      tl.fromTo("#ov-end-h", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 25.9);
+      tl.fromTo("#ov-end-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 28.6);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
