@@ -1,0 +1,296 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #020306; overflow: hidden; }
+    #doc-gl, #doc-fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  </style>
+  <div id="root" data-composition-id="doc" data-width="1080" data-height="1920" data-duration="40">
+    <canvas id="doc-gl" width="1080" height="1920"></canvas>
+    <canvas id="doc-fx" width="1080" height="1920"></canvas>
+  </div>
+  <script src="assets/vendor/three.min.js"></script>
+  <script>
+    (function () {
+      const W = 1080, H = 1920, DUR = 40;
+      // scene boundaries in video seconds (tuned to the voice)
+      const B = window.__nitazeneBeats || { lab: 6.0, pack: 12.8, street: 20.9, breath: 24.2, end: 28.6 };
+      const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, u) => a + (b - a) * u;
+      const sstep = (a, b, x) => { const u = clamp((x - a) / (b - a), 0, 1); return u * u * (3 - 2 * u); };
+      const easeIO = (u) => { u = clamp(u, 0, 1); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
+      function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+
+      // ---------- 3D ----------
+      const gl = document.getElementById("doc-gl");
+      const renderer = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+      renderer.setClearColor(0x020306, 1);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+      renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.physicallyCorrectLights = true;
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x020306, 0.06);
+      const camera = new THREE.PerspectiveCamera(30, W / H, 0.05, 200);
+
+      // lights: one cold key from above, a blue rim, almost no fill
+      const key = new THREE.SpotLight(0xdfe8ff, 45, 40, 0.42, 0.85, 2);
+      key.position.set(-2.4, 6.0, 2.2); key.target.position.set(0, 0, 0);
+      key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0002; key.shadow.radius = 4;
+      scene.add(key, key.target);
+      const rim = new THREE.DirectionalLight(0x3d6dff, 1.6); rim.position.set(3, 1.5, -4); scene.add(rim);
+      scene.add(new THREE.HemisphereLight(0x0b1220, 0x000000, 0.25));
+
+      // surface: dark, slightly glossy
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.32, metalness: 0.15 }));
+      floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+      // speckled tablet texture (pressed powder)
+      function speckle(seed, size) {
+        const c = document.createElement("canvas"); c.width = c.height = size; const g = c.getContext("2d");
+        const r = mulberry32(seed); g.fillStyle = "#808080"; g.fillRect(0, 0, size, size);
+        for (let i = 0; i < size * size * 0.18; i++) { const v = Math.floor(100 + r() * 60); g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(r() * size, r() * size, 1 + r() * 1.5, 1 + r() * 1.5); }
+        const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; return tx;
+      }
+      const pillMat = new THREE.MeshStandardMaterial({ color: 0xe8e4dc, roughness: 0.82, metalness: 0, bumpMap: speckle(3, 512), bumpScale: 0.004 });
+      function makePill() {
+        const prof = [[0, 0.2], [0.55, 0.19], [0.86, 0.15], [0.97, 0.09], [1.0, 0.0], [0.97, -0.09], [0.86, -0.15], [0.55, -0.19], [0, -0.2]].reverse();
+        const g = new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p[0], p[1])), 96);
+        g.computeVertexNormals();
+        const grp = new THREE.Group();
+        const m = new THREE.Mesh(g, pillMat); m.castShadow = true; m.receiveShadow = true; grp.add(m);
+        grp.position.y = 0.2;
+        return grp;
+      }
+      const pill = makePill(); pill.rotation.y = 0.5; scene.add(pill);
+
+      // sealed blister pack: foil base, clear domes, two tablets
+      const pack = new THREE.Group(); scene.add(pack);
+      (function () {
+        const w = 3.4, h = 1.7, r = 0.18, s = new THREE.Shape();
+        s.moveTo(-w / 2 + r, -h / 2); s.lineTo(w / 2 - r, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); s.lineTo(w / 2, h / 2 - r);
+        s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); s.lineTo(-w / 2 + r, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); s.lineTo(-w / 2, -h / 2 + r); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+        const base = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: 0.035, bevelEnabled: false }), new THREE.MeshStandardMaterial({ color: 0xb9c0c8, roughness: 0.38, metalness: 0.9 }));
+        base.rotation.x = -Math.PI / 2; base.position.y = 0.02; base.castShadow = true; base.receiveShadow = true; pack.add(base);
+        for (const x of [-0.85, 0.85]) {
+          const dome = new THREE.Mesh(new THREE.SphereGeometry(0.62, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshPhysicalMaterial({ color: 0xdfe8f0, roughness: 0.08, metalness: 0, transparent: true, opacity: 0.22, clearcoat: 1, side: THREE.DoubleSide }));
+          dome.scale.set(1, 0.5, 1); dome.position.set(x, 0.055, 0); pack.add(dome);
+          const p = makePill(); p.scale.setScalar(0.5); p.position.set(x, 0.06, 0); p.rotation.y = x; pack.add(p);
+        }
+      })();
+      pack.position.set(0, 0, 0);
+
+      // generic molecule models (symbolic): a fused 6+5 ring with side chains
+      const atomMat = { C: new THREE.MeshStandardMaterial({ color: 0x5f6873, roughness: 0.35, metalness: 0.2 }),
+        N: new THREE.MeshStandardMaterial({ color: 0x4d7dff, roughness: 0.3, metalness: 0.1, emissive: 0x0a1a55 }),
+        O: new THREE.MeshStandardMaterial({ color: 0xff5a4f, roughness: 0.3, metalness: 0.1, emissive: 0x3a0806 }) };
+      const bondMat = new THREE.MeshStandardMaterial({ color: 0x9aa4b0, roughness: 0.4, metalness: 0.3 });
+      function molecule(seed) {
+        const r = mulberry32(seed), grp = new THREE.Group(), atoms = [];
+        const L = 0.55;
+        for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6; atoms.push([Math.cos(a) * L, Math.sin(a) * L, 0, "C"]); }
+        const p0 = atoms[0], p1 = atoms[5];
+        atoms.push([1.05, 0.48, 0, "N"], [1.42, 0.0, 0, "C"], [1.05, -0.48, 0, "N"]);
+        atoms.push([2.0, 0.05, 0.15, "C"], [2.45, 0.6, 0.3, "C"], [-1.0, 0.6, 0, "N"], [-1.35, 1.1, 0.1, "O"], [-1.45, 0.25, -0.1, "O"], [1.25, -1.05, -0.3, "C"], [1.0, -1.6, -0.6, "C"], [1.45, -2.1, -0.4, "N"]);
+        const bonds = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [0, 6], [6, 7], [7, 8], [8, 5], [7, 9], [9, 10], [3, 11], [11, 12], [11, 13], [8, 14], [14, 15], [15, 16]];
+        atoms.forEach(([x, y, z, el]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(el === "C" ? 0.17 : 0.2, 32, 20), atomMat[el]); m.position.set(x, y, z); m.castShadow = true; grp.add(m); });
+        bonds.forEach(([a, b]) => {
+          const A = V3(...atoms[a].slice(0, 3)), Bp = V3(...atoms[b].slice(0, 3)), mid = A.clone().add(Bp).multiplyScalar(0.5), len = A.distanceTo(Bp);
+          const c = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, len, 12), bondMat);
+          c.position.copy(mid); c.quaternion.setFromUnitVectors(V3(0, 1, 0), Bp.clone().sub(A).normalize()); grp.add(c);
+        });
+        return grp;
+      }
+      const mols = [molecule(1), molecule(2), molecule(3)];
+      const molPos = [V3(0, 1.6, 0), V3(-2.6, 2.6, -3.5), V3(2.8, 0.9, -5)];
+      mols.forEach((m, i) => { m.position.copy(molPos[i]); scene.add(m); });
+
+      // ---------- 2D layer ----------
+      const fx = document.getElementById("doc-fx"), g = fx.getContext("2d");
+      const R = mulberry32(99);
+      const grain = Array.from({ length: 4 }, (_, k) => {
+        const c = document.createElement("canvas"); c.width = c.height = 256; const x = c.getContext("2d"); const r = mulberry32(500 + k);
+        const id = x.createImageData(256, 256); for (let i = 0; i < id.data.length; i += 4) { const v = Math.floor(r() * 255); id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+        x.putImageData(id, 0, 0); return c;
+      });
+      let mapDots = [];
+      // asphalt texture (wet, coarse)
+      const asphalt = (() => {
+        const c = document.createElement("canvas"); c.width = 540; c.height = 960; const x = c.getContext("2d"); const r = mulberry32(77);
+        x.fillStyle = "#07090d"; x.fillRect(0, 0, 540, 960);
+        for (let i = 0; i < 26000; i++) { const v = Math.floor(10 + r() * 26); x.fillStyle = `rgb(${v},${v + 2},${v + 6})`; x.fillRect(r() * 540, r() * 960, 1 + r() * 2, 1 + r() * 2); }
+        for (let i = 0; i < 14; i++) { const px = r() * 540, py = 420 + r() * 540, rw = 40 + r() * 140; const gr = x.createRadialGradient(px, py, 0, px, py, rw); gr.addColorStop(0, "rgba(30,40,60,0.55)"); gr.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = gr; x.beginPath(); x.ellipse(px, py, rw, rw * 0.32, 0, 0, 6.29); x.fill(); }
+        return c;
+      })();
+      // airway tree (static geometry, revealed over time)
+      const airway = [];
+      (function grow(x, y, ang, len, depth) {
+        if (depth > 7) return;
+        const x2 = x + Math.cos(ang) * len, y2 = y + Math.sin(ang) * len;
+        airway.push({ x, y, x2, y2, d: depth });
+        const spread = 0.42 + R() * 0.2;
+        grow(x2, y2, ang - spread, len * (0.72 + R() * 0.1), depth + 1);
+        grow(x2, y2, ang + spread, len * (0.72 + R() * 0.1), depth + 1);
+      })(540, 420, Math.PI / 2, 112, 0);
+      const nerves = Array.from({ length: 60 }, () => ({ y: 560 + R() * 820, side: R() < 0.5 ? -1 : 1, len: 80 + R() * 260, cur: (R() - 0.5) * 0.8 }));
+
+      function drawMap(t, alpha, pulseT) {
+        if (alpha <= 0.001 || !mapDots.length) return;
+        g.save(); g.globalAlpha = alpha;
+        for (const d of mapDots) {
+          const pulse = pulseT == null ? 0 : Math.max(0, 1 - Math.abs((d.x - (pulseT % 1.6) / 1.6 * 1400 + 160) / 120));
+          g.fillStyle = `rgba(${80 + pulse * 140},${150 + pulse * 90},255,${0.35 + pulse * 0.5})`;
+          g.fillRect(d.x, d.y, 4, 4);
+        }
+        g.restore();
+      }
+      function drawStreet(t) {
+        const k = t - B.street;
+        g.drawImage(asphalt, 0, 0, W, H);
+        // two strobing blue lights out of focus, reflected in the wet road
+        const strobe = (ph) => { const c = ((t * 1.6 + ph) % 1); return c < 0.12 ? 1 : c < 0.2 ? 0.25 : c < 0.32 ? 0.9 : 0.12; };
+        const lights = [[300, 330, strobe(0)], [780, 360, strobe(0.5)]];
+        g.save(); g.globalCompositeOperation = "lighter";
+        for (let i = 0; i < 14; i++) { const r2 = mulberry32(900 + i); const bx = r2() * W, by = 180 + r2() * 300, br = 20 + r2() * 45, warm = r2() < 0.35;
+          const bg2 = g.createRadialGradient(bx, by, br * 0.6, bx, by, br); bg2.addColorStop(0, warm ? "rgba(255,170,90,0.16)" : "rgba(110,150,255,0.14)"); bg2.addColorStop(1, "rgba(0,0,0,0)");
+          g.fillStyle = bg2; g.beginPath(); g.arc(bx, by, br, 0, 6.29); g.fill(); }
+        g.restore();
+        g.save(); g.globalCompositeOperation = "lighter";
+        for (const [lx, ly, a] of lights) {
+          const rg = g.createRadialGradient(lx, ly, 0, lx, ly, 260); rg.addColorStop(0, `rgba(70,120,255,${0.85 * a})`); rg.addColorStop(1, "rgba(20,40,160,0)");
+          g.fillStyle = rg; g.fillRect(lx - 260, ly - 260, 520, 520);
+          const st = g.createLinearGradient(0, 700, 0, 1900); st.addColorStop(0, `rgba(60,110,255,${0.5 * a})`); st.addColorStop(1, "rgba(30,60,200,0)");
+          g.save(); g.filter = "blur(26px)"; g.fillStyle = st; g.beginPath(); g.ellipse(lx + Math.sin(t * 3 + lx) * 6, 1250, 70, 560, 0, 0, 6.29); g.fill(); g.restore();
+        }
+        g.restore();
+        // out-of-focus silhouettes of responders
+        g.save(); g.filter = "blur(16px)"; g.fillStyle = "rgba(1,2,5,0.9)";
+        const sx = 520 + k * 12;
+        for (const [ox, sc] of [[-150, 1], [140, 0.94]]) {
+          const x = sx + ox, top = 520;
+          g.beginPath(); g.ellipse(x, top, 44 * sc, 52 * sc, 0, 0, 6.29); g.fill();
+          g.beginPath(); g.moveTo(x - 95 * sc, top + 90); g.quadraticCurveTo(x, top + 50, x + 95 * sc, top + 90);
+          g.lineTo(x + 80 * sc, top + 520 * sc); g.lineTo(x - 80 * sc, top + 520 * sc); g.closePath(); g.fill();
+          g.fillRect(x - 70 * sc, top + 500 * sc, 55 * sc, 330 * sc); g.fillRect(x + 15 * sc, top + 500 * sc, 55 * sc, 330 * sc);
+        }
+        g.restore();
+        // reflective band on the high-vis jackets, blurred
+        g.save(); g.filter = "blur(6px)"; g.globalCompositeOperation = "lighter";
+        for (const ox of [-140, 130]) { g.fillStyle = `rgba(200,220,170,${0.18 + 0.2 * lights[0][2]})`; g.fillRect(sx + ox - 95, 770, 190, 14); }
+        g.restore();
+      }
+      function drawBreath(t) {
+        const k = t - B.breath, dur = B.end - B.breath;
+        g.fillStyle = "#03050a"; g.fillRect(0, 0, W, H);
+        // airway tree, revealed and breathing
+        const reveal = sstep(0, 1.6, k);
+        const rate = lerp(1.0, 0.18, sstep(0.8, dur - 0.8, k));
+        const phase = (() => { let p = 0; const n = 200; for (let i = 0; i < n; i++) { const tt = (i + 0.5) / n * k; p += lerp(1.0, 0.18, sstep(0.8, dur - 0.8, tt)) * (k / n); } return p; })();
+        const breath = 0.5 + 0.5 * Math.sin(phase * Math.PI * 2 * 0.55);
+        const amp = lerp(1, 0.15, sstep(1.0, dur - 0.5, k));
+        g.save(); g.translate(540, 420); g.scale(1 + 0.04 * breath * amp, 1 + 0.03 * breath * amp); g.translate(-540, -420);
+        g.lineCap = "round";
+        for (const s of airway) {
+          if (s.d / 8 > reveal) continue;
+          g.strokeStyle = `rgba(110,190,255,${0.85 - s.d * 0.08})`; g.lineWidth = Math.max(1.5, 16 - s.d * 2.2);
+          g.shadowColor = "rgba(90,170,255,0.8)"; g.shadowBlur = 12;
+          g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(s.x2, s.y2); g.stroke();
+        }
+        g.restore();
+        // trachea + spinal cord + nerves (the brainstem drives breathing)
+        g.save(); g.strokeStyle = "rgba(110,190,255,0.9)"; g.lineWidth = 18; g.lineCap = "round"; g.shadowColor = "rgba(90,170,255,0.8)"; g.shadowBlur = 14;
+        g.beginPath(); g.moveTo(540, 200); g.lineTo(540, 420); g.stroke(); g.restore();
+        // breathing trace, slowing down and flattening
+        const gx0 = 140, gx1 = 940, gy = 960, span = gx1 - gx0;
+        g.save(); g.strokeStyle = "rgba(255,255,255,0.12)"; g.lineWidth = 2; g.beginPath(); g.moveTo(gx0, gy); g.lineTo(gx1, gy); g.stroke();
+        g.strokeStyle = "#ffb547"; g.lineWidth = 5; g.shadowColor = "rgba(255,181,71,0.7)"; g.shadowBlur = 10; g.beginPath();
+        const shown = clamp(k / dur, 0, 1) * span;
+        for (let x = 0; x <= shown; x += 3) {
+          const tt = x / span * dur;
+          let p = 0; const n = 60; for (let i = 0; i < n; i++) { const q = (i + 0.5) / n * tt; p += lerp(1.0, 0.18, sstep(0.8, dur - 0.8, q)) * (tt / n); }
+          const a = lerp(1, 0.08, sstep(1.0, dur - 0.5, tt));
+          const y = gy - Math.sin(p * Math.PI * 2 * 0.55) * 70 * a;
+          if (x === 0) g.moveTo(gx0 + x, y); else g.lineTo(gx0 + x, y);
+        }
+        g.stroke(); g.restore();
+      }
+
+      // ---------- shots ----------
+      function shot(t) {
+        const s = { pillOn: false, packOn: false, molOn: false, cam: null, tgt: null, fov: 30, key: 120, mapA: 0, mapPulse: null, twoD: null };
+        if (t < B.lab) { // extreme close-up of an unknown tablet
+          const u = easeIO(t / B.lab);
+          s.pillOn = true; s.cam = lv(V3(4.6, 3.4, 7.8), V3(2.4, 2.1, 5.0), u); s.tgt = V3(0, 0.15, 0); s.fov = 28;
+          s.key = 10 + 35 * sstep(0, 1.2, t);
+        } else if (t < B.pack) { // lab: molecules, then the world map
+          const k = t - B.lab, u = easeIO(k / (B.pack - B.lab));
+          s.molOn = true; s.cam = lv(V3(0.6, 2.4, 13.5), V3(-0.6, 2.1, 10.5), u); s.tgt = V3(0, 1.5, 0); s.fov = 32;
+          s.mapA = sstep(3.0, 4.2, k) * 0.9; s.mapPulse = k;
+        } else if (t < B.street) { // sealed pack under inspection
+          const k = t - B.pack, u = easeIO(k / (B.street - B.pack));
+          s.packOn = true; s.cam = lv(V3(-4.2, 8.2, 9.0), V3(3.0, 6.0, 7.6), u); s.tgt = V3(0, 0.05, 0); s.fov = 30;
+          s.scan = sstep(0.4, 6.5, k);
+        } else if (t < B.breath) { s.twoD = "street"; }
+        else if (t < B.end) { s.twoD = "breath"; }
+        else { // the tablet alone again, pulling back, the map fading
+          const k = t - B.end, u = easeIO(k / (DUR - B.end));
+          s.pillOn = true; s.cam = lv(V3(4.2, 3.1, 7.2), V3(6.5, 9.5, 17.0), u); s.tgt = V3(0, 0.15, 0); s.fov = 30;
+          s.mapA = 0.35 * (1 - sstep(3.5, 8.0, k)); s.key = lerp(45, 25, u) * (1 - sstep(36.4, 37.2, t));
+        }
+        return s;
+      }
+      const lv = (a, b, u) => a.clone().lerp(b, u);
+      const scanLight = new THREE.PointLight(0x8fdbff, 0, 3, 2); scene.add(scanLight);
+
+      let ready = false, lastT = 0;
+      function renderAt(t) {
+        if (!ready) return;
+        t = clamp(t, 0, DUR - 1 / 60);
+        const s = shot(t);
+        g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H); g.globalAlpha = 1; g.filter = "none"; g.globalCompositeOperation = "source-over";
+        if (!s.twoD) {
+          pill.visible = s.pillOn; pack.visible = !!s.packOn; mols.forEach((m) => (m.visible = s.molOn));
+          floor.visible = !s.molOn;
+          pill.rotation.y = 0.5 + t * 0.05;
+          mols.forEach((m, i) => { m.rotation.set(t * 0.12 + i, t * 0.2 + i * 2, 0.2 * i); m.position.y = molPos[i].y + Math.sin(t * 0.6 + i) * 0.08; });
+          key.intensity = s.key;
+          scanLight.intensity = s.packOn ? 6 : 0;
+          if (s.packOn) scanLight.position.set(lerp(-2, 2, s.scan), 0.5, 0.2);
+          camera.fov = s.fov; camera.position.copy(s.cam); camera.lookAt(s.tgt); camera.updateProjectionMatrix();
+          renderer.render(scene, camera);
+          drawMap(t, s.mapA, s.mapPulse);
+          if (s.packOn) { // scanning line across the pack
+            const p = V3(lerp(-1.9, 1.9, s.scan), 0.12, 0).project(camera), x = (p.x * 0.5 + 0.5) * W;
+            const lg = g.createLinearGradient(x - 40, 0, x + 40, 0); lg.addColorStop(0, "rgba(143,219,255,0)"); lg.addColorStop(0.5, "rgba(143,219,255,0.35)"); lg.addColorStop(1, "rgba(143,219,255,0)");
+            g.fillStyle = lg; g.fillRect(x - 40, 520, 80, 900);
+          }
+        } else if (s.twoD === "street") drawStreet(t);
+        else drawBreath(t);
+        // cut flashes: a short dip at each scene change
+        for (const c of [B.lab, B.pack, B.street, B.breath, B.end]) { const d = Math.abs(t - c); if (d < 0.12) { g.fillStyle = `rgba(0,0,0,${0.85 * (1 - d / 0.12)})`; g.fillRect(0, 0, W, H); } }
+        // vignette and film grain
+        const vg = g.createRadialGradient(540, 900, 520, 540, 900, 1250); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.55)");
+        g.fillStyle = vg; g.fillRect(0, 0, W, H);
+        const gt = grain[Math.floor(t * 24) % 4]; g.globalAlpha = 0.05;
+        for (let y = 0; y < H; y += 256) for (let x = 0; x < W; x += 256) g.drawImage(gt, x, y);
+        g.globalAlpha = 1;
+      }
+
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["doc"] = new Promise((res) => {
+        const im = new Image();
+        im.onload = () => {
+          // dot-matrix world map from the ocean mask (land = dark)
+          const c = document.createElement("canvas"); c.width = 180; c.height = 90; const x = c.getContext("2d"); x.drawImage(im, 0, 0, 180, 90);
+          const d = x.getImageData(0, 0, 180, 90).data;
+          for (let j = 4; j < 80; j++) for (let i = 0; i < 180; i++) if (d[(j * 180 + i) * 4] < 110) mapDots.push({ x: 60 + i * 5.33, y: 620 + j * 5.33 });
+          ready = true; renderAt(lastT); res();
+        };
+        im.onerror = () => { ready = true; renderAt(lastT); res(); };
+        im.src = "assets/tex/earth_specular_2048.jpg";
+      });
+      window.addEventListener("hf-seek", (e) => { lastT = e.detail.time; renderAt(lastT); });
+      const tl = gsap.timeline({ paused: true }); tl.to({}, { duration: DUR }); window.__timelines["doc"] = tl;
+    })();
+  </script>
+</template>

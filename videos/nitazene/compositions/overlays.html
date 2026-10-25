@@ -1,0 +1,68 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "Inter", sans-serif; color: #ffffff; }
+    .ov { position: absolute; left: 0; width: 1080px; text-align: center; }
+    .sh { text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85); }
+    .stmt { font-weight: 800; font-size: 70px; line-height: 1.12; letter-spacing: -0.01em; }
+    .blue { color: #8fdbff; }
+    .warn { color: #ff6b5e; }
+    .chip { position: absolute; left: 70px; top: 200px; font-weight: 600; font-size: 28px; letter-spacing: 0.04em; color: #d8e3ee; padding: 10px 20px; border: 1.5px solid rgba(216, 227, 238, 0.55); border-radius: 22px; background: rgba(2, 3, 6, 0.45); }
+    .title { font-weight: 900; font-size: 150px; letter-spacing: 0.06em; }
+    .sub { font-weight: 600; font-size: 32px; letter-spacing: 0.24em; color: #b9c8d6; }
+    .badge { display: inline-block; font-weight: 800; font-size: 56px; letter-spacing: 0.04em; padding: 22px 40px; border: 4px solid #ff6b5e; border-radius: 18px; color: #ffffff; background: rgba(40, 6, 6, 0.55); }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="40">
+    <div id="o-hook" class="ov clip" data-start="0" data-duration="5.9" data-track-index="2" style="top: 300px">
+      <div id="o-hook-1" class="stmt sh">Eine unbekannte Tablette.</div>
+      <div id="o-hook-2" class="stmt sh warn" style="margin-top: 14px">Eine tödliche Gefahr.</div>
+    </div>
+
+    <div id="o-sym" class="clip" data-start="6.0" data-duration="6.8" data-track-index="3"><div id="o-sym-c" class="chip">Symbolbild · keine echte Strukturformel</div></div>
+    <div id="o-name" class="ov clip" data-start="6.4" data-duration="6.3" data-track-index="2" style="top: 300px">
+      <div id="o-name-t" class="title sh">NITAZENE</div>
+      <div id="o-name-s" class="sub sh" style="margin-top: 8px">SYNTHETISCHE OPIOIDE</div>
+    </div>
+
+    <div id="o-unk" class="ov clip" data-start="15.6" data-duration="5.2" data-track-index="2" style="top: 330px">
+      <div id="o-unk-b" class="badge sh">Wirkstoff unbekannt</div>
+    </div>
+
+    <div id="o-breath" class="ov clip" data-start="25.0" data-duration="3.5" data-track-index="2" style="top: 1130px">
+      <div id="o-breath-t" class="sub sh" style="color: #ffb547">ATMUNG · VERLANGSAMT</div>
+    </div>
+
+    <div id="o-end" class="ov clip" data-start="32.4" data-duration="4.7" data-track-index="2" style="top: 330px">
+      <div id="o-end-t" class="stmt sh">Du kannst nicht sehen,<br /><span class="blue">was wirklich darin steckt.</span></div>
+    </div>
+    <div id="o-brand" class="ov clip" data-start="37.0" data-duration="3.0" data-track-index="2" style="top: 760px">
+      <div id="o-brand-k" class="sub sh">GEDANKEN</div>
+      <div id="o-brand-t" class="title sh" style="font-size: 96px; letter-spacing: 0.08em">EXPERIMENT</div>
+      <div id="o-brand-s" class="sub sh" style="margin-top: 40px; font-size: 26px; letter-spacing: 0.12em">IM NOTFALL: 112</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const B = window.__nitazeneBeats || { lab: 6.0, pack: 12.8, street: 20.9, breath: 24.2, end: 28.6, name: 6.6, unk: 15.6, endText: 32.4 };
+      const tl = gsap.timeline({ paused: true });
+      const IN = { duration: 0.5, ease: "power3.out" };
+      tl.fromTo("#o-hook-1", { opacity: 1, y: 0 }, { opacity: 1, y: 0, duration: 0.01 }, 0);
+      tl.fromTo("#o-hook-2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...IN }, 2.3);
+      tl.to("#o-hook", { opacity: 0, duration: 0.25, ease: "power2.in" }, 5.6);
+      tl.fromTo("#o-sym-c", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 6.2);
+      tl.to("#o-sym-c", { opacity: 0, duration: 0.25 }, 12.5);
+      tl.fromTo("#o-name-t", { opacity: 0, letterSpacing: "0.3em" }, { opacity: 1, letterSpacing: "0.06em", duration: 0.9, ease: "power3.out" }, 6.45);
+      tl.fromTo("#o-name-s", { opacity: 0, y: 12 }, { opacity: 1, y: 0, ...IN }, 8.3);
+      tl.to("#o-name", { opacity: 0, duration: 0.3, ease: "power2.in" }, 12.4);
+      tl.fromTo("#o-unk-b", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, 15.6);
+      tl.to("#o-unk", { opacity: 0, duration: 0.25, ease: "power2.in" }, 20.55);
+      tl.fromTo("#o-breath-t", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 25.0);
+      tl.to("#o-breath", { opacity: 0, duration: 0.2 }, 28.3);
+      tl.fromTo("#o-end-t", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 32.4);
+      tl.to("#o-end", { opacity: 0, duration: 0.4, ease: "power2.in" }, 36.7);
+      tl.fromTo("#o-brand-k", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 37.0);
+      tl.fromTo("#o-brand-t", { opacity: 0, letterSpacing: "0.3em" }, { opacity: 1, letterSpacing: "0.08em", duration: 0.9, ease: "power3.out" }, 37.05);
+      tl.fromTo("#o-brand-s", { opacity: 0 }, { opacity: 0.85, duration: 0.5 }, 37.6);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
