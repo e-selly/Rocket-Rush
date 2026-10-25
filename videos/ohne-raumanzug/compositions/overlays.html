@@ -7,103 +7,232 @@
       font-family: "Inter", sans-serif;
       color: #ffffff;
     }
-    .ov {
-      position: absolute;
-      left: 0;
-      width: 1080px;
-      text-align: center;
-    }
-    .shadow {
-      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.85);
-    }
-    .kicker {
-      font-weight: 700;
-      font-size: 42px;
-      letter-spacing: 0.22em;
-      color: #8fdbff;
-    }
-    .headline {
-      font-weight: 900;
-      font-size: 108px;
-      line-height: 0.98;
-      letter-spacing: -0.02em;
-    }
-    .big {
-      font-weight: 900;
-      font-size: 180px;
-      line-height: 1;
-      letter-spacing: -0.03em;
-    }
-    .sub {
-      font-weight: 700;
-      font-size: 40px;
-      line-height: 1.3;
-      letter-spacing: 0.14em;
-      color: #d8e6f2;
-    }
-    .amber {
-      color: #ffb547;
-    }
-    .ice {
-      color: #8fdbff;
-    }
+    .sh { text-shadow: 0 4px 22px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.8); }
+    .teal { color: #5fe3d0; }
+    .amber { color: #ffb547; }
+    .red { color: #ff6b5e; }
+    .ice { color: #8fdbff; }
+    .muted { color: #8fa3b8; }
+    /* HUD */
+    .hud-k { font-weight: 700; font-size: 24px; letter-spacing: 0.18em; color: #8fa3b8; }
+    .hud-v { font-weight: 900; font-size: 64px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 2px; }
+    .hud-v small { font-size: 30px; font-weight: 700; margin-left: 6px; color: #8fa3b8; }
+    #hud-left { position: absolute; left: 70px; top: 190px; }
+    #hud-right { position: absolute; right: 70px; top: 190px; text-align: right; }
+    #hud-mode { position: absolute; left: 70px; top: 312px; font-weight: 700; font-size: 24px; letter-spacing: 0.16em; color: #c9d6e3; }
+    #hud-mode .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ff6b5e; margin-right: 12px; vertical-align: 2px; }
+    #hud-bars { position: absolute; right: 70px; top: 320px; width: 330px; }
+    .bar-row { margin-bottom: 16px; }
+    .bar-k { display: flex; justify-content: space-between; font-weight: 700; font-size: 22px; letter-spacing: 0.14em; color: #8fa3b8; }
+    .bar-k b { color: #ffffff; font-variant-numeric: tabular-nums; letter-spacing: 0; font-size: 26px; }
+    .bar { height: 10px; border-radius: 5px; background: rgba(143, 163, 184, 0.22); margin-top: 6px; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 100%; border-radius: 5px; transform-origin: 0 50%; }
+    /* polls */
+    .poll { position: absolute; left: 0; width: 1080px; top: 400px; text-align: center; }
+    .poll-t { font-weight: 900; font-size: 96px; letter-spacing: -0.02em; display: inline-block; position: relative; }
+    .strike { position: absolute; left: -12px; right: -12px; top: 52%; height: 10px; border-radius: 5px; background: #ff6b5e; transform-origin: 0 50%; }
+    .pills { margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 34px; }
+    .pill { font-weight: 800; font-size: 40px; letter-spacing: 0.06em; padding: 14px 44px; border-radius: 40px; border: 3px solid; background: rgba(5, 11, 20, 0.55); }
+    .pill.ja { color: #5fe3d0; border-color: rgba(95, 227, 208, 0.7); }
+    .pill.nein { color: #ff6b5e; border-color: rgba(255, 107, 94, 0.7); }
+    .count { width: 74px; height: 74px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.55); font-weight: 900; font-size: 40px; line-height: 68px; text-align: center; }
+    /* graph */
+    #graph { position: absolute; left: 90px; top: 430px; width: 900px; }
+    .g-k { font-weight: 700; font-size: 28px; letter-spacing: 0.18em; color: #8fa3b8; }
+    .g-bars { display: flex; justify-content: center; align-items: flex-end; gap: 120px; height: 470px; margin-top: 40px; border-bottom: 3px solid rgba(143, 163, 184, 0.45); }
+    .g-col { width: 220px; text-align: center; }
+    .g-bar { width: 220px; border-radius: 14px 14px 0 0; transform-origin: 50% 100%; }
+    .g-lab { font-weight: 900; font-size: 44px; margin-top: 18px; }
+    .g-sub { font-weight: 700; font-size: 24px; letter-spacing: 0.12em; color: #8fa3b8; margin-top: 6px; }
+    .g-val { font-weight: 800; font-size: 30px; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .center { position: absolute; left: 0; width: 1080px; text-align: center; }
+    .kick { font-weight: 700; font-size: 40px; letter-spacing: 0.22em; }
+    .head { font-weight: 900; font-size: 112px; line-height: 0.98; letter-spacing: -0.02em; }
+    .sub { font-weight: 700; font-size: 34px; letter-spacing: 0.14em; color: #c9d6e3; }
   </style>
-  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="35">
-    <div id="ov-hook" class="ov clip" data-start="0" data-duration="1.75" data-track-index="2" style="top: 230px">
-      <div id="ov-hook-k" class="kicker shadow">GEDANKENEXPERIMENT</div>
-      <div id="ov-hook-h" class="headline shadow" style="margin-top: 18px">OHNE<br /><span class="amber">RAUMANZUG</span><br />IM ALL?</div>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="35" data-layout-allow-overlap>
+    <!-- live simulation readout -->
+    <div id="hud" class="clip" data-start="0" data-duration="25.6" data-track-index="2">
+      <div id="hud-left" class="sh"><div class="hud-k">ZEIT IM VAKUUM</div><div class="hud-v"><span id="hud-clock">0,0</span><small>s</small></div></div>
+      <div id="hud-right" class="sh"><div class="hud-k">DRUCK</div><div class="hud-v"><span id="hud-press">29,6</span><small>kPa</small></div></div>
+      <div id="hud-mode" class="sh"><span class="dot" id="hud-dot"></span><span id="hud-mode-t">LIVE · IM RAUMANZUG</span></div>
+      <div id="hud-bars" class="sh">
+        <div class="bar-row" id="row-o2"><div class="bar-k">SAUERSTOFF <b id="v-o2">98 %</b></div><div class="bar"><i id="b-o2" style="background:#ffb547"></i></div></div>
+        <div class="bar-row" id="row-cons"><div class="bar-k">BEWUSSTSEIN <b id="v-cons">100 %</b></div><div class="bar"><i id="b-cons" style="background:#5fe3d0"></i></div></div>
+        <div class="bar-row" id="row-temp"><div class="bar-k">KÖRPERTEMP. <b id="v-temp">37,0 °C</b></div><div class="bar"><i id="b-temp" style="background:#ff8a4c"></i></div></div>
+      </div>
     </div>
 
-    <div id="ov-boil" class="ov clip" data-start="9.3" data-duration="2.3" data-track-index="2" style="top: 250px">
-      <div id="ov-boil-t" class="sub shadow">UNTER 6,3 kPa SIEDET WASSER<br /><span class="ice">SCHON BEI 37 °C</span></div>
+    <!-- hook: frame 0 already asks -->
+    <div id="hook" class="center clip" data-start="0" data-duration="2.6" data-track-index="3" style="top: 380px">
+      <div id="hook-k" class="kick sh ice">GEDANKENEXPERIMENT</div>
+      <div id="hook-h" class="head sh" style="margin-top: 16px">OHNE <span class="amber">RAUMANZUG</span><br />IM ALL?</div>
     </div>
 
-    <div id="ov-sec" class="ov clip" data-start="14.2" data-duration="2.7" data-track-index="2" style="top: 280px">
-      <div id="ov-sec-n" class="big shadow amber">10–15 s</div>
-      <div id="ov-sec-s" class="sub shadow" style="margin-top: 14px">BIS ZUR BEWUSSTLOSIGKEIT</div>
+    <!-- poll 1: explode? -->
+    <div id="poll1" class="poll clip" data-start="2.55" data-duration="5.3" data-track-index="3">
+      <div class="poll-t sh" id="p1-t">EXPLODIERST DU?<span class="strike" id="p1-strike"></span></div>
+      <div class="pills" id="p1-pills">
+        <div class="pill ja" id="p1-ja">JA</div>
+        <div class="count sh" id="p1-count">3</div>
+        <div class="pill nein" id="p1-nein">NEIN</div>
+      </div>
     </div>
 
-    <div id="ov-cold" class="ov clip" data-start="17.0" data-duration="2.2" data-track-index="2" style="top: 300px">
-      <div id="ov-cold-n" class="big shadow ice">−270 °C</div>
-      <div id="ov-cold-s" class="sub shadow" style="margin-top: 14px">TEMPERATUR DES WELTALLS</div>
+    <!-- 10–15 s -->
+    <div id="secs" class="center clip" data-start="14.2" data-duration="2.25" data-track-index="3" style="top: 560px">
+      <div id="secs-n" class="head sh amber" style="font-size: 170px">10–15 s</div>
+      <div id="secs-s" class="sub sh" style="margin-top: 12px">BIS ZUR BEWUSSTLOSIGKEIT</div>
     </div>
 
-    <div id="ov-heat" class="ov clip" data-start="19.4" data-duration="3.0" data-track-index="2" style="top: 250px">
-      <div id="ov-heat-k" class="kicker shadow amber">WÄRMEBILD · SIMULIERT</div>
-      <div id="ov-heat-s" class="sub shadow" style="margin-top: 22px">KEINE LUFT = KEINE WÄRMELEITUNG<br />NUR LANGSAME ABSTRAHLUNG</div>
+    <!-- poll 2: frozen? -->
+    <div id="poll2" class="poll clip" data-start="16.95" data-duration="2.2" data-track-index="3" style="top: 520px">
+      <div class="poll-t sh" id="p2-t">SOFORT ERFROREN?<span class="strike" id="p2-strike"></span></div>
+      <div class="pills">
+        <div class="pill ja" id="p2-ja">JA</div>
+        <div class="pill nein" id="p2-nein">NEIN</div>
+      </div>
     </div>
 
-    <div id="ov-end" class="ov clip" data-start="25.6" data-duration="9.4" data-track-index="2" style="top: 620px">
-      <div id="ov-end-k" class="kicker shadow">FOLGE FÜR MEHR</div>
-      <div id="ov-end-h" class="headline shadow" style="margin-top: 22px">GEDANKEN-<br /><span class="amber">EXPERIMENT</span></div>
-      <div id="ov-end-s" class="sub shadow" style="margin-top: 30px">UNGLAUBLICHE WISSENSCHAFTSFRAGEN</div>
+    <!-- heat loss chart -->
+    <div id="graph" class="clip" data-start="19.2" data-duration="3.2" data-track-index="3">
+      <div class="g-k" id="g-k">WÄRMEVERLUST · SCHEMATISCH</div>
+      <div class="g-bars">
+        <div class="g-col"><div class="g-val red" id="g-v1">WÄRMELEITUNG</div><div class="g-bar" id="g-b1" style="height: 400px; background: linear-gradient(#ff6b5e, rgba(255,107,94,0.35))"></div></div>
+        <div class="g-col"><div class="g-val amber" id="g-v2">NUR STRAHLUNG</div><div class="g-bar" id="g-b2" style="height: 90px; background: linear-gradient(#ffb547, rgba(255,181,71,0.35))"></div></div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 120px">
+        <div class="g-col"><div class="g-lab red" id="g-l1">EISWASSER</div><div class="g-sub">0 °C</div></div>
+        <div class="g-col"><div class="g-lab amber" id="g-l2">VAKUUM</div><div class="g-sub">−270 °C</div></div>
+      </div>
+      <div class="sub sh" id="g-note" style="margin-top: 40px; text-align: center">OHNE LUFT KAUM WÄRMEVERLUST</div>
+    </div>
+
+    <!-- deadly -->
+    <div id="deadly" class="center clip" data-start="23.9" data-duration="1.7" data-track-index="3" style="top: 560px">
+      <div id="deadly-k" class="kick sh muted">OHNE SCHNELLE RETTUNG</div>
+      <div id="deadly-h" class="head sh red" style="margin-top: 10px">TÖDLICH</div>
+    </div>
+
+    <!-- payoff + channel -->
+    <div id="myth" class="center clip" data-start="25.6" data-duration="2.2" data-track-index="3" style="top: 470px">
+      <div class="poll-t sh" style="font-size: 82px">EXPLODIEREN?<span class="strike" id="m-s1"></span></div><br />
+      <div class="poll-t sh" style="font-size: 82px; margin-top: 18px">SOFORT ERFRIEREN?<span class="strike" id="m-s2"></span></div>
+      <div id="myth-h" class="head sh amber" style="margin-top: 34px; font-size: 150px">MYTHOS</div>
+    </div>
+    <div id="chan" class="center clip" data-start="27.7" data-duration="7.3" data-track-index="3" style="top: 560px">
+      <div id="chan-k" class="kick sh ice">FOLGE FÜR MEHR</div>
+      <div id="chan-h" class="head sh" style="margin-top: 20px">GEDANKEN-<br /><span class="amber">EXPERIMENT</span></div>
+      <div id="chan-s" class="sub sh" style="margin-top: 28px">UNGLAUBLICHE WISSENSCHAFTSFRAGEN</div>
     </div>
   </div>
   <script>
     (function () {
       const tl = gsap.timeline({ paused: true });
       const enter = { duration: 0.3, ease: "power3.out" };
-      tl.fromTo("#ov-hook-h", { opacity: 1, scale: 1 }, { opacity: 1, scale: 1.04, duration: 1.7, ease: "none" }, 0);
-      tl.to("#ov-hook", { opacity: 0, duration: 0.12, ease: "power2.in" }, 1.6);
+      const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+      const fmt = (v, d) => v.toFixed(d).replace(".", ",");
 
-      tl.fromTo("#ov-boil-t", { opacity: 0, y: 20 }, { opacity: 1, y: 0, ...enter }, 9.3);
-      tl.to("#ov-boil-t", { opacity: 0, duration: 0.15, ease: "power2.in" }, 11.45);
+      // seconds in vacuum as the story runs: live, slow motion, time-lapse
+      function vacClock(t) {
+        const segs = [[4.95, 7.9, 1], [7.9, 11.6, 0.25], [11.6, 16.4, 2.318], [16.4, 22.4, 1], [22.4, 25.6, 21]];
+        let c = 0;
+        for (const [a, b, r] of segs) { if (t <= a) break; c += (Math.min(t, b) - a) * r; }
+        return c;
+      }
+      function mode(t) {
+        if (t < 4.95) return ["LIVE · IM RAUMANZUG", "#5fe3d0"];
+        if (t < 7.9) return ["LIVE", "#ff6b5e"];
+        if (t < 11.6) return ["ZEITLUPE ×0,25", "#8fdbff"];
+        if (t < 16.4) return ["ZEITRAFFER ×2,3", "#ffb547"];
+        if (t < 22.4) return ["LIVE", "#ff6b5e"];
+        return ["ZEITRAFFER ×21", "#ffb547"];
+      }
+      const el = (id) => document.getElementById(id);
+      const E = { clock: el("hud-clock"), press: el("hud-press"), modeT: el("hud-mode-t"), dot: el("hud-dot"),
+        o2v: el("v-o2"), o2b: el("b-o2"), cv: el("v-cons"), cb: el("b-cons"), tv: el("v-temp"), tb: el("b-temp"),
+        rO2: el("row-o2"), rC: el("row-cons"), rT: el("row-temp"), hudL: el("hud-left"), hudR: el("hud-right"), bars: el("hud-bars"), modeEl: el("hud-mode") };
+      const proxy = { t: 0 };
+      tl.fromTo(proxy, { t: 0 }, {
+        t: 25.6, duration: 25.6, ease: "none",
+        onUpdate: () => {
+          const t = proxy.t, c = vacClock(t);
+          E.clock.textContent = fmt(c, c < 20 ? 1 : 0);
+          const p = t < 4.95 ? 29.6 : 29.6 * Math.pow(1 - clamp((t - 4.95) / 0.45, 0, 1), 2);
+          E.press.textContent = fmt(p, 1);
+          E.press.style.color = t < 4.95 ? "#ffffff" : "#ff6b5e";
+          const m = mode(t); E.modeT.textContent = m[0]; E.dot.style.background = m[1];
+          const o2 = clamp(98 - c * 4.2, 8, 98);
+          E.o2v.textContent = Math.round(o2) + " %"; E.o2b.style.transform = `scaleX(${(o2 / 100).toFixed(3)})`;
+          const cons = clamp(100 - Math.max(0, c - 9) * (100 / 6), 0, 100);
+          E.cv.textContent = Math.round(cons) + " %"; E.cb.style.transform = `scaleX(${(cons / 100).toFixed(3)})`;
+          E.cb.style.background = cons < 30 ? "#ff6b5e" : "#5fe3d0";
+          const temp = 37.0 - Math.max(0, c - 17) * 0.0035;
+          E.tv.textContent = fmt(temp, 1) + " °C"; E.tb.style.transform = `scaleX(${((temp - 30) / 7).toFixed(3)})`;
+          const showBars = t >= 11.6;
+          E.rO2.style.opacity = showBars ? "1" : "0"; E.rC.style.opacity = showBars ? "1" : "0";
+          E.rT.style.opacity = t >= 17.0 ? "1" : "0";
+          const g = t >= 19.1 && t < 22.45 ? 0 : 1;
+          E.hudL.style.opacity = E.hudR.style.opacity = E.bars.style.opacity = String(g);
+        },
+      }, 0);
 
-      tl.fromTo("#ov-sec-n", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 14.2);
-      tl.fromTo("#ov-sec-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 14.45);
-      tl.to("#ov-sec", { opacity: 0, duration: 0.15, ease: "power2.in" }, 16.75);
+      // hook → poll
+      tl.fromTo("#hook-h", { scale: 1 }, { scale: 1.04, duration: 2.5, ease: "none" }, 0);
+      tl.to("#hook", { opacity: 0, duration: 0.12, ease: "power2.in" }, 2.45);
+      tl.fromTo("#p1-t", { opacity: 0, y: 24 }, { opacity: 1, y: 0, ...enter }, 2.55);
+      tl.fromTo("#p1-pills", { opacity: 0, y: 18 }, { opacity: 1, y: 0, ...enter }, 2.75);
+      const cnt = document.getElementById("p1-count");
+      tl.call(() => { cnt.textContent = "3"; }, null, 2.7);
+      tl.call(() => { cnt.textContent = "2"; }, null, 3.45);
+      tl.call(() => { cnt.textContent = "1"; }, null, 4.2);
+      tl.fromTo("#p1-count", { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power2.out" }, 3.45);
+      tl.fromTo("#p1-count", { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power2.out" }, 4.2);
+      tl.to("#poll1", { opacity: 0, duration: 0.08 }, 4.95);
+      // answer: NEIN
+      tl.fromTo("#poll1", { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, 5.9);
+      tl.to("#p1-count", { opacity: 0, duration: 0.01 }, 5.9);
+      tl.fromTo("#p1-strike", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.inOut" }, 6.2);
+      tl.to("#p1-ja", { opacity: 0.25, duration: 0.2 }, 6.25);
+      tl.fromTo("#p1-nein", { scale: 1, boxShadow: "0 0 0 rgba(255,107,94,0)" }, { scale: 1.15, background: "#ff6b5e", color: "#ffffff", boxShadow: "0 0 40px rgba(255,107,94,0.75)", duration: 0.3, ease: "back.out(2)" }, 6.3);
+      tl.to("#poll1", { opacity: 0, duration: 0.15, ease: "power2.in" }, 7.65);
 
-      tl.fromTo("#ov-cold-n", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 17.0);
-      tl.fromTo("#ov-cold-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 17.25);
-      tl.to("#ov-cold", { opacity: 0, duration: 0.15, ease: "power2.in" }, 19.05);
+      // 10–15 s
+      tl.fromTo("#secs-n", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 14.2);
+      tl.fromTo("#secs-s", { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...enter }, 14.45);
+      tl.to("#secs", { opacity: 0, duration: 0.15, ease: "power2.in" }, 16.3);
 
-      tl.fromTo("#ov-heat-k", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 19.4);
-      tl.fromTo("#ov-heat-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 19.75);
-      tl.to("#ov-heat", { opacity: 0, duration: 0.15, ease: "power2.in" }, 22.25);
+      // poll 2
+      tl.fromTo("#p2-t", { opacity: 0, y: 24 }, { opacity: 1, y: 0, ...enter }, 16.95);
+      tl.fromTo("#poll2 .pills", { opacity: 0, y: 18 }, { opacity: 1, y: 0, ...enter }, 17.15);
+      tl.fromTo("#p2-strike", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power2.inOut" }, 18.45);
+      tl.to("#p2-ja", { opacity: 0.25, duration: 0.2 }, 18.45);
+      tl.fromTo("#p2-nein", { scale: 1 }, { scale: 1.15, background: "#ff6b5e", color: "#ffffff", boxShadow: "0 0 40px rgba(255,107,94,0.75)", duration: 0.3, ease: "back.out(2)" }, 18.5);
+      tl.to("#poll2", { opacity: 0, duration: 0.15, ease: "power2.in" }, 19.0);
 
-      tl.fromTo("#ov-end-k", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 25.7);
-      tl.fromTo("#ov-end-h", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 25.9);
-      tl.fromTo("#ov-end-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 28.6);
+      // chart
+      tl.fromTo("#g-k", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 19.25);
+      tl.fromTo("#g-b1", { scaleY: 0 }, { scaleY: 1, duration: 0.7, ease: "power3.out" }, 19.5);
+      tl.fromTo(["#g-l1", "#g-v1"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 19.6);
+      tl.fromTo("#g-b2", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power3.out" }, 20.3);
+      tl.fromTo(["#g-l2", "#g-v2"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 20.4);
+      tl.fromTo("#g-note", { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...enter }, 21.0);
+      tl.to("#graph", { opacity: 0, duration: 0.2, ease: "power2.in" }, 22.2);
+
+      // deadly
+      tl.fromTo("#deadly-k", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 23.9);
+      tl.fromTo("#deadly-h", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }, 24.5);
+      tl.to("#deadly", { opacity: 0, duration: 0.15, ease: "power2.in" }, 25.45);
+
+      // payoff
+      tl.fromTo("#myth", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 25.6);
+      tl.fromTo("#m-s1", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power2.inOut" }, 25.95);
+      tl.fromTo("#m-s2", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power2.inOut" }, 26.25);
+      tl.fromTo("#myth-h", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out" }, 26.6);
+      tl.to("#myth", { opacity: 0, duration: 0.2, ease: "power2.in" }, 27.6);
+      tl.fromTo("#chan-k", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 27.7);
+      tl.fromTo("#chan-h", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 27.85);
+      tl.fromTo("#chan-s", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 28.5);
       window.__timelines["overlays"] = tl;
     })();
   </script>
