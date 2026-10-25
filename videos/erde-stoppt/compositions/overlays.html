@@ -1,0 +1,154 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      font-family: "Inter", sans-serif;
+      color: #ffffff;
+    }
+    .ov {
+      position: absolute;
+      left: 0;
+      width: 1080px;
+      text-align: center;
+    }
+    .shadow {
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.85);
+    }
+    .kicker {
+      font-weight: 700;
+      font-size: 44px;
+      letter-spacing: 0.22em;
+      color: #8fdbff;
+    }
+    .headline {
+      font-weight: 900;
+      font-size: 112px;
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+    }
+    .amber {
+      color: #ffb547;
+    }
+    .ice {
+      color: #8fdbff;
+    }
+    .num {
+      font-weight: 900;
+      font-size: 196px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+    .unit {
+      font-weight: 900;
+      font-size: 92px;
+      letter-spacing: -0.01em;
+    }
+    .sub {
+      font-weight: 700;
+      font-size: 40px;
+      letter-spacing: 0.16em;
+      color: #d8e6f2;
+    }
+    .side {
+      position: absolute;
+      width: 440px;
+      font-weight: 900;
+      font-size: 64px;
+      line-height: 1.02;
+    }
+    .side small {
+      display: block;
+      font-weight: 700;
+      font-size: 34px;
+      letter-spacing: 0.16em;
+      margin-top: 12px;
+    }
+    .span-inline {
+      display: inline-block;
+    }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="64">
+    <!-- Hook: frame 0 already carries the question -->
+    <div id="ov-hook" class="ov clip" data-start="0" data-duration="3.3" data-track-index="2" style="top: 210px">
+      <div id="ov-hook-k" class="kicker shadow">WAS WÄRE, WENN …</div>
+      <div id="ov-hook-h" class="headline shadow" style="margin-top: 18px">DIE ERDE<br /><span class="amber">STOPPT?</span></div>
+    </div>
+
+    <!-- 1.670 km/h -->
+    <div id="ov-speed" class="ov clip" data-start="9.6" data-duration="3.4" data-track-index="2" style="top: 300px">
+      <div id="ov-speed-num" class="shadow"><span id="ov-speed-val" class="num amber">1.670</span></div>
+      <div id="ov-speed-unit" class="unit shadow" style="margin-top: -6px">km/h</div>
+      <div id="ov-speed-sub" class="sub shadow" style="margin-top: 22px">DREHGESCHWINDIGKEIT AM ÄQUATOR</div>
+    </div>
+
+    <!-- Thought experiment marker -->
+    <div id="ov-hypo" class="ov clip" data-start="16.5" data-duration="7.9" data-track-index="2" style="top: 232px">
+      <div id="ov-hypo-t" class="sub shadow">GEDANKENEXPERIMENT</div>
+    </div>
+
+    <!-- Day becomes a year -->
+    <div id="ov-year" class="ov clip" data-start="43.0" data-duration="2.5" data-track-index="2" style="top: 300px">
+      <div id="ov-year-h" class="headline shadow">1 TAG<br /><span class="amber">= 1 JAHR</span></div>
+    </div>
+    <div id="ov-day" class="clip" data-start="45.9" data-duration="5.1" data-track-index="2">
+      <div id="ov-day-t" class="side shadow amber" style="left: 600px; top: 330px; text-align: right">6 MONATE<small>GLÜHENDE HITZE</small></div>
+    </div>
+    <div id="ov-night" class="clip" data-start="48.4" data-duration="2.6" data-track-index="2">
+      <div id="ov-night-t" class="side shadow ice" style="left: 40px; top: 330px; text-align: left">6 MONATE<small>EISIGE NACHT</small></div>
+    </div>
+
+    <!-- Thought experiment reminder at the end -->
+    <div id="ov-end-tag" class="ov clip" data-start="52.9" data-duration="3.4" data-track-index="2" style="top: 232px">
+      <div id="ov-end-tag-t" class="sub shadow">NUR EIN GEDANKENEXPERIMENT</div>
+    </div>
+
+    <!-- Final question, word-synced to the voice -->
+    <div id="ov-q" class="ov clip" data-start="58.8" data-duration="5.2" data-track-index="2" style="top: 1060px">
+      <div class="headline shadow" style="font-size: 104px">
+        <span id="ov-q-a" class="span-inline">Würdest du das</span><br />
+        <span id="ov-q-b" class="span-inline amber" style="font-size: 132px">überleben?</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const enter = { duration: 0.3, ease: "power3.out" };
+      // hook
+      tl.fromTo("#ov-hook-k", { opacity: 1, y: 0 }, { opacity: 1, y: 0, duration: 0.01 }, 0);
+      tl.fromTo("#ov-hook-h", { opacity: 1, scale: 1 }, { opacity: 1, scale: 1.04, duration: 3.2, ease: "none" }, 0);
+      tl.to("#ov-hook", { opacity: 0, duration: 0.08, ease: "power2.in" }, 3.2);
+      // speed counter synced to the spoken number (9.68 – 11.12)
+      tl.fromTo("#ov-speed-num", { opacity: 0, y: 30 }, { opacity: 1, y: 0, ...enter }, 9.6);
+      const counter = { v: 0 };
+      const valEl = document.getElementById("ov-speed-val");
+      tl.fromTo(counter, { v: 0 }, {
+        v: 1670, duration: 1.45, ease: "power2.out",
+        onUpdate: () => { valEl.textContent = Math.round(counter.v).toLocaleString("de-DE"); },
+      }, 9.68);
+      tl.fromTo("#ov-speed-unit", { opacity: 0, y: 20 }, { opacity: 1, y: 0, ...enter }, 11.2);
+      tl.fromTo("#ov-speed-sub", { opacity: 0, y: 16 }, { opacity: 1, y: 0, ...enter }, 11.5);
+      tl.to("#ov-speed", { opacity: 0, duration: 0.15, ease: "power2.in" }, 12.83);
+      // hypothetical marker
+      tl.fromTo("#ov-hypo-t", { opacity: 0 }, { opacity: 0.92, duration: 0.4, ease: "power2.out" }, 16.5);
+      tl.to("#ov-hypo-t", { opacity: 0, duration: 0.25, ease: "power2.in" }, 24.1);
+      // 1 Tag = 1 Jahr
+      tl.fromTo("#ov-year-h", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, 43.0);
+      tl.to("#ov-year-h", { opacity: 0, duration: 0.15, ease: "power2.in" }, 45.32);
+      tl.fromTo("#ov-day-t", { opacity: 0, x: 30 }, { opacity: 1, x: 0, ...enter }, 45.9);
+      tl.to("#ov-day-t", { opacity: 0, duration: 0.2, ease: "power2.in" }, 50.75);
+      tl.fromTo("#ov-night-t", { opacity: 0, x: -30 }, { opacity: 1, x: 0, ...enter }, 48.4);
+      tl.to("#ov-night-t", { opacity: 0, duration: 0.2, ease: "power2.in" }, 50.75);
+      // end tag
+      tl.fromTo("#ov-end-tag-t", { opacity: 0 }, { opacity: 0.92, duration: 0.4, ease: "power2.out" }, 52.9);
+      tl.to("#ov-end-tag-t", { opacity: 0, duration: 0.25, ease: "power2.in" }, 56.0);
+      // question
+      tl.fromTo("#ov-q-a", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 58.85);
+      tl.fromTo("#ov-q-b", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, 59.6);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
