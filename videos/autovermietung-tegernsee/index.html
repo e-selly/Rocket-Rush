@@ -1,61 +1,40 @@
 <!doctype html>
-<html lang="en" data-resolution="portrait">
+<html lang="de" data-resolution="portrait">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/vendor/gsap.min.js"></script>
     <style>
-      /* Placeholders: replace all three with the film's own palette and display face. */
-      :root {
-        --ground: #6b6b6b;
-        --ink: #ffffff;
-        --font-display: sans-serif;
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        margin: 0;
-        width: 1080px;
-        height: 1920px;
-        overflow: hidden;
-        background: var(--ground);
-      }
-      #root {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-display);
-      }
-      #title {
-        color: var(--ink);
-        font-size: 72px;
-        font-weight: 600;
-        letter-spacing: -0.03em;
-      }
+      :root { --ground: #0f1a28; --ink: #ffffff; --font-display: "Montserrat", sans-serif; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: var(--font-display); background: var(--ground); }
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      data-composition-id="main"
-      data-start="0"
-      data-duration="10"
-      data-width="1080"
-      data-height="1920"
-    >
-      <h1 id="title" class="clip" data-start="0" data-duration="10" data-track-index="0">Title</h1>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="40" data-width="1080" data-height="1920">
+      <div id="spot" data-composition-id="spot" data-composition-src="compositions/spot.html" data-start="0" data-duration="40"
+        data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920" style="z-index: 1"></div>
+      <div id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="40"
+        data-track-index="1" data-track-kind="captions" data-width="1080" data-height="1920" style="z-index: 2"></div>
+
+      <!-- Voice (ElevenLabs, Daniel) -->
+      <audio id="a-voice" class="clip" src="assets/audio/voice.mp3" data-start="1.0" data-duration="32.48" data-track-index="10" data-volume="1"></audio>
+
+      <!-- Transitions -->
+      <audio id="a-sfx-00" class="clip" src="assets/audio/whoosh2.mp3" data-start="7.591" data-duration="1.48" data-track-index="13" data-volume="0.3"></audio>
+      <audio id="a-sfx-01" class="clip" src="assets/audio/whoosh1.mp3" data-start="11.214" data-duration="1.0" data-track-index="13" data-volume="0.3"></audio>
+      <audio id="a-sfx-02" class="clip" src="assets/audio/whoosh-short.mp3" data-start="12.451" data-duration="0.575" data-track-index="13" data-volume="0.18"></audio>
+      <audio id="a-sfx-03" class="clip" src="assets/audio/whoosh-short.mp3" data-start="13.631" data-duration="0.575" data-track-index="13" data-volume="0.18"></audio>
+      <audio id="a-sfx-04" class="clip" src="assets/audio/whoosh-short.mp3" data-start="14.811" data-duration="0.575" data-track-index="13" data-volume="0.18"></audio>
+      <audio id="a-sfx-05" class="clip" src="assets/audio/whoosh2.mp3" data-start="15.941" data-duration="1.48" data-track-index="13" data-volume="0.3"></audio>
+      <audio id="a-sfx-06" class="clip" src="assets/audio/whoosh1.mp3" data-start="22.514" data-duration="1.0" data-track-index="13" data-volume="0.3"></audio>
+      <audio id="a-sfx-07" class="clip" src="assets/audio/whoosh2.mp3" data-start="26.341" data-duration="1.48" data-track-index="13" data-volume="0.3"></audio>
+      <audio id="a-sfx-08" class="clip" src="assets/audio/ping.mp3" data-start="34.509" data-duration="1.32" data-track-index="13" data-volume="0.3"></audio>
     </div>
     <script>
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.fromTo("#title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0);
-      window.__timelines["main"] = tl;
-      tl.seek(0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
     </script>
   </body>
 </html>
