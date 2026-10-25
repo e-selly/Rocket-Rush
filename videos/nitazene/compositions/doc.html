@@ -12,7 +12,7 @@
     (function () {
       const W = 1080, H = 1920, DUR = 40;
       // scene boundaries in video seconds (tuned to the voice)
-      const B = window.__nitazeneBeats || { lab: 6.0, pack: 12.8, street: 20.9, breath: 24.2, end: 28.6 };
+      const B = window.__nitazeneBeats || { lab: 6.4, pack: 14.4, street: 22.1, breath: 24.0, end: 27.3 };
       const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
       const lerp = (a, b, u) => a + (b - a) * u;
       const sstep = (a, b, x) => { const u = clamp((x - a) / (b - a), 0, 1); return u * u * (3 - 2 * u); };
@@ -225,7 +225,7 @@
         } else if (t < B.pack) { // lab: molecules, then the world map
           const k = t - B.lab, u = easeIO(k / (B.pack - B.lab));
           s.molOn = true; s.cam = lv(V3(0.6, 2.4, 13.5), V3(-0.6, 2.1, 10.5), u); s.tgt = V3(0, 1.5, 0); s.fov = 32;
-          s.mapA = sstep(3.0, 4.2, k) * 0.9; s.mapPulse = k;
+          s.mapA = sstep(3.6, 4.8, k) * 0.9; s.mapPulse = k;
         } else if (t < B.street) { // sealed pack under inspection
           const k = t - B.pack, u = easeIO(k / (B.street - B.pack));
           s.packOn = true; s.cam = lv(V3(-4.2, 8.2, 9.0), V3(3.0, 6.0, 7.6), u); s.tgt = V3(0, 0.05, 0); s.fov = 30;
@@ -235,7 +235,7 @@
         else { // the tablet alone again, pulling back, the map fading
           const k = t - B.end, u = easeIO(k / (DUR - B.end));
           s.pillOn = true; s.cam = lv(V3(4.2, 3.1, 7.2), V3(6.5, 9.5, 17.0), u); s.tgt = V3(0, 0.15, 0); s.fov = 30;
-          s.mapA = 0.35 * (1 - sstep(3.5, 8.0, k)); s.key = lerp(45, 25, u) * (1 - sstep(36.4, 37.2, t));
+          s.mapA = 0.35 * (1 - sstep(3.5, 8.0, k)); s.key = lerp(45, 25, u) * (1 - sstep(37.4, 38.1, t));
         }
         return s;
       }
