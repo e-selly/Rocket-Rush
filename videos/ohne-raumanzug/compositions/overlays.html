@@ -186,8 +186,11 @@
       tl.call(() => { cnt.textContent = "3"; }, null, 2.7);
       tl.call(() => { cnt.textContent = "2"; }, null, 3.45);
       tl.call(() => { cnt.textContent = "1"; }, null, 4.2);
-      tl.fromTo("#p1-count", { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power2.out" }, 3.45);
-      tl.fromTo("#p1-count", { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "power2.out" }, 4.2);
+      tl.set("#p1-count", { scale: 1 }, 0);
+      tl.set("#p1-count", { scale: 1.25 }, 3.45);
+      tl.to("#p1-count", { scale: 1, duration: 0.3, ease: "power2.out" }, 3.45);
+      tl.set("#p1-count", { scale: 1.25 }, 4.2);
+      tl.to("#p1-count", { scale: 1, duration: 0.3, ease: "power2.out" }, 4.2);
       tl.to("#poll1", { opacity: 0, duration: 0.08 }, 4.95);
       // answer: NEIN
       tl.fromTo("#poll1", { opacity: 0 }, { opacity: 1, duration: 0.2, immediateRender: false }, 5.9);
