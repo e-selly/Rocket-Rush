@@ -1,0 +1,48 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "Inter", sans-serif; color: #ffffff; }
+    .ov { position: absolute; left: 0; width: 1080px; text-align: center; }
+    .sh { text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85), 0 0 3px rgba(0, 0, 0, 0.6); }
+    .hook { font-weight: 900; font-size: 92px; line-height: 1.04; letter-spacing: -0.01em; }
+    .amber { color: #ffb547; }
+    .chip { position: absolute; left: 70px; top: 210px; font-weight: 700; font-size: 30px; letter-spacing: 0.08em; color: #eef2f6; padding: 12px 24px; border: 1.5px solid rgba(238, 242, 246, 0.6); border-radius: 26px; background: rgba(4, 6, 10, 0.42); }
+    .end { font-weight: 900; font-size: 104px; line-height: 1.02; letter-spacing: 0.01em; }
+    .sub { font-weight: 600; font-size: 32px; letter-spacing: 0.34em; color: #e8ddcf; }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="40">
+    <div id="o-hook" class="ov clip" data-start="0" data-duration="3.5" data-track-index="2" style="top: 330px">
+      <div id="o-hook-1" class="hook sh">WAS, WENN ALLE</div>
+      <div id="o-hook-2" class="hook sh amber">MENSCHEN</div>
+      <div id="o-hook-3" class="hook sh">VERSCHWINDEN?</div>
+    </div>
+
+    <div id="o-c1" class="clip" data-start="3.6" data-duration="8.1" data-track-index="3"><div id="o-c1-t" class="chip">NACH 24 STUNDEN</div></div>
+    <div id="o-c2" class="clip" data-start="11.8" data-duration="4.4" data-track-index="3"><div id="o-c2-t" class="chip">NACH WENIGEN TAGEN</div></div>
+    <div id="o-c3" class="clip" data-start="16.3" data-duration="5.3" data-track-index="3"><div id="o-c3-t" class="chip">NACH WOCHEN</div></div>
+    <div id="o-c4" class="clip" data-start="21.75" data-duration="3.55" data-track-index="3"><div id="o-c4-t" class="chip">NACH JAHREN</div></div>
+    <div id="o-c5" class="clip" data-start="25.4" data-duration="4.5" data-track-index="3"><div id="o-c5-t" class="chip">NACH JAHRHUNDERTEN</div></div>
+
+    <div id="o-end" class="ov clip" data-start="37.85" data-duration="2.15" data-track-index="2" style="top: 700px">
+      <div id="o-end-1" class="end sh">DIE ERDE BLEIBT.</div>
+      <div id="o-end-2" class="end sh amber" style="margin-top: 10px">WIR NICHT.</div>
+      <div id="o-end-3" class="sub sh" style="margin-top: 70px">GEDANKENEXPERIMENT</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#o-hook-1", { opacity: 1 }, { opacity: 1, duration: 0.01 }, 0);
+      tl.fromTo("#o-hook-2", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 0.75);
+      tl.fromTo("#o-hook-3", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.6);
+      tl.to("#o-hook", { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.2);
+      [["#o-c1-t", 3.6, 11.7], ["#o-c2-t", 11.8, 16.2], ["#o-c3-t", 16.3, 21.6], ["#o-c4-t", 21.75, 25.3], ["#o-c5-t", 25.4, 29.9]].forEach(([id, a, b]) => {
+        tl.fromTo(id, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, a);
+        tl.to(id, { opacity: 0, duration: 0.2, ease: "power2.in" }, b - 0.2);
+      });
+      tl.fromTo("#o-end-1", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 37.85);
+      tl.fromTo("#o-end-2", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 38.45);
+      tl.fromTo("#o-end-3", { opacity: 0 }, { opacity: 0.9, duration: 0.5 }, 39.0);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
