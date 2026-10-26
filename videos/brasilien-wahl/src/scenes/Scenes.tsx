@@ -12,20 +12,29 @@ const Headline: React.FC<{ children: React.ReactNode; size?: number; style?: Rea
   <div style={{ fontWeight: 900, fontSize: size, lineHeight: 1.02, textAlign: "center", letterSpacing: "-0.01em", ...style }}>{children}</div>
 );
 
-// 1 — Hook: Brazil draws itself
+// 1 — Hook: visible from the very first frame
 export const Hook: React.FC = () => {
   const f = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, durationInFrames } = useVideoConfig();
+  const stamp = rise(f, 1.15 * fps, 6);
+  const shake = f > 1.15 * fps && f < 1.15 * fps + 12 ? Math.sin(f * 2.9) * 12 * (1 - (f - 1.15 * fps) / 12) : 0;
+  const out = 1 - rise(f, durationInFrames - 6, 6);
   return (
     <>
-      <AbsoluteFill style={{ alignItems: "center", top: 560 }}>
-        <div style={{ scale: interpolate(f, [0, 3.4 * fps], [0.92, 1.04]) }}>
-          <BrazilMap size={760} draw={rise(f, 0, 1.4 * fps)} fill={rise(f, 0.9 * fps, 20)} glow={rise(f, 1.2 * fps, 20)} />
+      <AbsoluteFill style={{ alignItems: "center", top: 520, opacity: out }}>
+        <div style={{ scale: interpolate(f, [0, durationInFrames], [1.02, 1.12]) }}>
+          <BrazilMap size={820} draw={1} fill={1} glow={1} color={C.red} />
         </div>
       </AbsoluteFill>
-      <Stack top={250}>
-        <div style={enter(f, 0)}><Kicker>Stichwahl · 25. Oktober 2026</Kicker></div>
-        <div style={{ ...enter(f, 4), marginTop: 26 }}><Headline size={104}>BRASILIEN<br />HAT GEWÄHLT</Headline></div>
+      <Stack top={230}>
+        <div style={{ opacity: out }}><Kicker color={C.yellow}>Brasilien · Stichwahl</Kicker></div>
+        <div style={{ marginTop: 26, opacity: out, scale: interpolate(f, [0, 8], [1.12, 1], { extrapolateRight: "clamp" }) }}>
+          <Headline size={150}>VERLOREN.</Headline>
+        </div>
+        <div style={{ marginTop: 40, opacity: stamp * out, scale: interpolate(stamp, [0, 1], [1.5, 1]), rotate: "-3deg", translate: `${shake}px 0px`,
+          background: C.red, borderRadius: 24, padding: "22px 40px", boxShadow: "0 20px 60px rgba(255,75,75,0.45)" }}>
+          <Headline size={84}>UND JETZT<br />ANNULLIEREN?</Headline>
+        </div>
       </Stack>
     </>
   );
@@ -55,9 +64,9 @@ export const Result: React.FC = () => {
       <div style={enter(f, 0, durationInFrames)}><Kicker>Endergebnis Stichwahl</Kicker></div>
       <div style={enter(f, 0, durationInFrames)}>
         <Row name="LULA" value={51.8} color={C.green} start={0.3 * fps} win />
-        <Row name="F. BOLSONARO" value={48.2} color={C.yellow} start={4.3 * fps} />
+        <Row name="F. BOLSONARO" value={48.2} color={C.yellow} start={4.7 * fps} />
       </div>
-      <div style={{ ...enter(f, 4.6 * fps, durationInFrames), marginTop: 60, fontSize: 30, fontWeight: 500, color: C.dim }}>Quelle: Oberstes Wahlgericht (TSE), gerundet</div>
+      <div style={{ ...enter(f, 5.0 * fps, durationInFrames), marginTop: 60, fontSize: 30, fontWeight: 500, color: C.dim }}>Quelle: Oberstes Wahlgericht (TSE), gerundet</div>
     </Stack>
   );
 };
@@ -220,22 +229,44 @@ export const Next: React.FC = () => {
   );
 };
 
-// 10 — Question to the viewer
+// 10 — Question to the viewer: answer with 1 or 2
+const Choice: React.FC<{ n: string; label: React.ReactNode; color: string; start: number; end: number; k: number }> = ({ n, label, color, start, end, k }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return (
+    <div style={{ ...enter(f, start, end), scale: 1 + 0.025 * Math.sin((f / fps) * 4 + k), marginTop: 34, width: 920, display: "flex", alignItems: "center", gap: 34,
+      padding: "30px 40px", borderRadius: 30, border: `5px solid ${color}`, background: C.card }}>
+      <div style={{ width: 130, height: 130, borderRadius: 65, background: color, color: C.bg, fontWeight: 900, fontSize: 92, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{n}</div>
+      <Headline size={62} style={{ textAlign: "left" }}>{label}</Headline>
+    </div>
+  );
+};
 export const Question: React.FC = () => {
   const f = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
-  const pulse = (k: number) => 1 + 0.03 * Math.sin((f / fps) * 4 + k);
   return (
-    <Stack top={360}>
+    <Stack top={300}>
       <div style={enter(f, 0, durationInFrames)}><Kicker>Was meinst du?</Kicker></div>
-      <div style={{ ...enter(f, 6, durationInFrames), marginTop: 50, width: 900, padding: "40px 0", borderRadius: 30, textAlign: "center", border: `5px solid ${C.green}`, scale: pulse(0) }}>
-        <Headline size={70}>BERECHTIGTER<br />PROTEST</Headline>
-      </div>
-      <div style={{ ...enter(f, 12, durationInFrames), marginTop: 26, fontWeight: 900, fontSize: 48, color: C.dim }}>ODER</div>
-      <div style={{ ...enter(f, 18, durationInFrames), marginTop: 26, width: 900, padding: "40px 0", borderRadius: 30, textAlign: "center", border: `5px solid ${C.red}`, scale: pulse(2) }}>
-        <Headline size={70}>SCHLECHTER<br />VERLIERER</Headline>
-      </div>
-      <div style={{ ...enter(f, 1.6 * fps, durationInFrames), marginTop: 50, fontSize: 40, fontWeight: 700 }}>Schreib es in die Kommentare</div>
+      <Choice n="1" label={<>BERECHTIGTER<br />PROTEST</> } color={C.green} start={4} end={durationInFrames} k={0} />
+      <Choice n="2" label={<>SCHLECHTER<br />VERLIERER</> } color={C.red} start={0.9 * fps} end={durationInFrames} k={2} />
+      <div style={{ ...enter(f, 2.4 * fps, durationInFrames), marginTop: 46 }}><Headline size={62}>Schreib <span style={{ color: C.yellow }}>1</span> oder <span style={{ color: C.yellow }}>2</span><br />in die Kommentare</Headline></div>
+    </Stack>
+  );
+};
+
+// 11 — Follow
+export const Follow: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const tap = interpolate(f, [1.3 * fps, 1.45 * fps, 1.65 * fps], [1, 0.9, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const done = f > 1.45 * fps;
+  return (
+    <Stack top={380}>
+      <div style={enter(f, 0)}><Kicker>Teil 2 folgt</Kicker></div>
+      <div style={{ ...enter(f, 3), marginTop: 28 }}><Headline size={80}>Kommt die<br /><span style={{ color: C.yellow }}>Annullierung</span><br />durch?</Headline></div>
+      <div style={{ ...enter(f, 0.6 * fps), marginTop: 70, scale: tap, padding: "30px 80px", borderRadius: 999, background: done ? C.card : C.red, border: `4px solid ${done ? C.line : C.red}`,
+        fontWeight: 900, fontSize: 64, fontFamily: FONT, color: C.ink, boxShadow: done ? "none" : "0 18px 50px rgba(255,75,75,0.45)" }}>{done ? "GEFOLGT" : "+ FOLGEN"}</div>
+      <div style={{ ...enter(f, 1.8 * fps), marginTop: 40, fontSize: 40, fontWeight: 700, color: C.dim }}>Folg mir, damit du es nicht verpasst</div>
     </Stack>
   );
 };

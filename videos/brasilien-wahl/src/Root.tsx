@@ -11,7 +11,7 @@ export const RemotionRoot: React.FC = () => {
     <Composition
       id="BrasilienWahl"
       component={NewsVideo}
-      durationInFrames={45 * 30}
+      durationInFrames={49 * 30}
       fps={30}
       width={1080}
       height={1920}

@@ -3,7 +3,7 @@ import { Audio } from "@remotion/media";
 import { BrazilMap } from "./BrazilMap";
 import { C, FONT } from "./theme";
 import captions from "./captions.json";
-import { Clock, Context, Historic, Hook, Margin, Next, Odds, Question, Result, Twist } from "./scenes/Scenes";
+import { Clock, Context, Follow, Historic, Hook, Margin, Next, Odds, Question, Result, Twist } from "./scenes/Scenes";
 
 type Word = { t: string; s: number; e: number; hi: boolean };
 type Group = { start: number; end: number; words: Word[] };
@@ -11,7 +11,7 @@ type Group = { start: number; end: number; words: Word[] };
 const Background: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const red = interpolate(f, [19.9 * fps, 20.3 * fps, 24.3 * fps, 24.6 * fps], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const red = interpolate(f, [20.5 * fps, 20.9 * fps, 24.3 * fps, 24.6 * fps], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ background: C.bg }}>
       <AbsoluteFill style={{ background: `radial-gradient(1200px 900px at 50% 38%, rgba(25,194,107,${0.16 * (1 - red)}), rgba(255,75,75,${0.2 * red}) 0%, transparent 70%)` }} />
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
   const f = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   return (
-    <AbsoluteFill style={{ height: 160, top: 90, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: "0 80px", fontFamily: FONT, opacity: interpolate(f, [0, 8], [0, 1], { extrapolateRight: "clamp" }) }}>
+    <AbsoluteFill style={{ height: 160, top: 90, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: "0 80px", fontFamily: FONT, opacity: 1 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
         <div style={{ background: C.red, color: C.ink, fontWeight: 900, fontSize: 32, letterSpacing: "0.12em", padding: "10px 20px", borderRadius: 10 }}>NEWS</div>
         <div style={{ color: C.ink, fontWeight: 700, fontSize: 32 }}>Brasilien</div>
@@ -48,7 +48,7 @@ const Captions: React.FC = () => {
   const t = f / fps;
   const g = (captions as Group[]).find((c) => t >= c.start && t < c.end);
   if (!g) return null;
-  const a = interpolate(t, [g.start, g.start + 0.15, g.end - 0.1, g.end], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const a = g.start < 0.05 && t < 0.2 ? 1 : interpolate(t, [g.start, g.start + 0.15, g.end - 0.1, g.end], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ top: 1390, height: 260, alignItems: "center", justifyContent: "flex-start", fontFamily: FONT }}>
       <div style={{ opacity: a, translate: `0px ${(1 - a) * 16}px`, width: 920, textAlign: "center", fontWeight: 800, fontSize: 64, lineHeight: 1.1, color: C.ink, textShadow: "0 4px 18px rgba(0,0,0,0.8)" }}>
@@ -65,32 +65,35 @@ const Captions: React.FC = () => {
 
 export const NewsVideo: React.FC = () => {
   const { fps } = useVideoConfig();
-  const cuts = [100, 352, 445, 600, 735, 895, 1010, 1127, 1194];
+  const cuts = [100, 372, 462, 618, 737, 903, 1018, 1137, 1200, 1338];
   return (
     <AbsoluteFill style={{ backgroundColor: C.bg }}>
       <Background />
       <Sequence name="Hook" from={0} durationInFrames={100}><Hook /></Sequence>
-      <Sequence name="Ergebnis" from={100} durationInFrames={252}><Result /></Sequence>
-      <Sequence name="Vorsprung" from={352} durationInFrames={93}><Margin /></Sequence>
-      <Sequence name="Historisch" from={445} durationInFrames={155}><Historic /></Sequence>
-      <Sequence name="Wendung" from={600} durationInFrames={135}><Twist /></Sequence>
-      <Sequence name="Uhr" from={735} durationInFrames={160}><Clock /></Sequence>
-      <Sequence name="Hintergrund" from={895} durationInFrames={115}><Context /></Sequence>
-      <Sequence name="Einschaetzung" from={1010} durationInFrames={117}><Odds /></Sequence>
-      <Sequence name="Ausblick" from={1127} durationInFrames={67}><Next /></Sequence>
-      <Sequence name="Frage" from={1194} durationInFrames={156}><Question /></Sequence>
+      <Sequence name="Ergebnis" from={100} durationInFrames={272}><Result /></Sequence>
+      <Sequence name="Vorsprung" from={372} durationInFrames={90}><Margin /></Sequence>
+      <Sequence name="Historisch" from={462} durationInFrames={156}><Historic /></Sequence>
+      <Sequence name="Wendung" from={618} durationInFrames={119}><Twist /></Sequence>
+      <Sequence name="Uhr" from={737} durationInFrames={166}><Clock /></Sequence>
+      <Sequence name="Hintergrund" from={903} durationInFrames={115}><Context /></Sequence>
+      <Sequence name="Einschaetzung" from={1018} durationInFrames={119}><Odds /></Sequence>
+      <Sequence name="Ausblick" from={1137} durationInFrames={63}><Next /></Sequence>
+      <Sequence name="Frage" from={1200} durationInFrames={138}><Question /></Sequence>
+      <Sequence name="Folgen" from={1338} durationInFrames={132}><Follow /></Sequence>
       <Header />
       <Captions />
 
-      <Sequence name="Stimme" from={9} durationInFrames={43 * fps}><Audio src={staticFile("voice.mp3")} volume={1} /></Sequence>
+      <Sequence name="Stimme" from={9} durationInFrames={48 * fps}><Audio src={staticFile("voice.mp3")} volume={1} /></Sequence>
       <Audio src={staticFile("newsbed.mp3")} volume={0.2} />
       <Sequence name="SFX Intro" from={0} durationInFrames={2 * fps}><Audio src={staticFile("impact-bass-1.mp3")} volume={0.4} /></Sequence>
+      <Sequence name="SFX Hook-Stempel" from={34} durationInFrames={2 * fps}><Audio src={staticFile("impact-bass-2.mp3")} volume={0.4} /></Sequence>
+      <Sequence name="SFX Folgen" from={1381} durationInFrames={fps}><Audio src={staticFile("click-soft.mp3")} volume={0.5} /></Sequence>
       {cuts.map((c, i) => (
         <Sequence key={c} name={`SFX Schnitt ${i + 1}`} from={c - 6} durationInFrames={fps}><Audio src={staticFile("whoosh-short.mp3")} volume={0.18} /></Sequence>
       ))}
-      <Sequence name="SFX Riser" from={510} durationInFrames={90}><Audio src={staticFile("riser.mp3")} trimBefore={7 * fps} volume={0.22} /></Sequence>
-      <Sequence name="SFX Glitch" from={600} durationInFrames={fps}><Audio src={staticFile("glitch-1.mp3")} volume={0.3} /></Sequence>
-      <Sequence name="SFX Stempel" from={602} durationInFrames={2 * fps}><Audio src={staticFile("impact-bass-2.mp3")} volume={0.45} /></Sequence>
+      <Sequence name="SFX Riser" from={528} durationInFrames={90}><Audio src={staticFile("riser.mp3")} trimBefore={7 * fps} volume={0.22} /></Sequence>
+      <Sequence name="SFX Glitch" from={618} durationInFrames={fps}><Audio src={staticFile("glitch-1.mp3")} volume={0.3} /></Sequence>
+      <Sequence name="SFX Stempel" from={620} durationInFrames={2 * fps}><Audio src={staticFile("impact-bass-2.mp3")} volume={0.45} /></Sequence>
     </AbsoluteFill>
   );
 };
