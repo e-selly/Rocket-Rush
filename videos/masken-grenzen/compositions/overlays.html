@@ -1,0 +1,47 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "Inter", sans-serif; color: #ffffff; }
+    .ov { position: absolute; left: 0; width: 1080px; text-align: center; }
+    .sh { text-shadow: 0 4px 26px rgba(0, 0, 0, 0.9), 0 0 3px rgba(0, 0, 0, 0.7); }
+    .hook { font-weight: 900; font-size: 86px; line-height: 1.04; letter-spacing: -0.005em; }
+    .ice { color: #a9c8ff; }
+    .end { font-weight: 800; font-size: 56px; line-height: 1.14; white-space: nowrap; }
+    .amber { color: #ffb547; }
+    .logo { display: inline-flex; flex-direction: column; align-items: center; gap: 18px; }
+    .logo-t { font-weight: 800; font-size: 46px; letter-spacing: 0.32em; padding-left: 0.32em; }
+    .logo-r { width: 380px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.85), rgba(255,255,255,0)); }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="35">
+    <div id="o-hook" class="ov clip" data-start="0" data-duration="3.9" data-track-index="2" style="top: 250px">
+      <div id="o-hook-1" class="hook sh">WILLST DU IHREN</div>
+      <div id="o-hook-2" class="hook sh ice">WAHREN CHARAKTER</div>
+      <div id="o-hook-3" class="hook sh">SEHEN?</div>
+    </div>
+    <div id="o-end" class="ov clip" data-start="32.6" data-duration="2.4" data-track-index="2" style="top: 1060px">
+      <div id="o-end-1" class="end sh">SIE VERMISSEN NICHT IMMER DICH.</div>
+      <div id="o-end-2" class="end sh amber" style="margin-top: 14px">MANCHMAL VERMISSEN SIE<br />DEINEN NUTZEN.</div>
+    </div>
+    <div id="o-logo" class="ov clip" data-start="33.5" data-duration="1.5" data-track-index="3" style="top: 1500px">
+      <div class="logo">
+        <svg id="o-logo-i" width="64" height="76" viewBox="0 0 64 76"><path d="M32 3 C14 3 5 16 5 34 C5 55 18 73 32 73 C46 73 59 55 59 34 C59 16 50 3 32 3 Z" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="21" cy="33" rx="7" ry="3.6" fill="#fff"/><ellipse cx="43" cy="33" rx="7" ry="3.6" fill="#fff"/><path d="M32 3 L32 73" stroke="#fff" stroke-width="2" stroke-dasharray="4 5"/></svg>
+        <div id="o-logo-r" class="logo-r"></div>
+        <div id="o-logo-t" class="logo-t sh">MASKEN ABNEHMEN</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#o-hook-1", { opacity: 1 }, { opacity: 1, duration: 0.01 }, 0);
+      tl.fromTo("#o-hook-2", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 0.5);
+      tl.fromTo("#o-hook-3", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 1.1);
+      tl.to("#o-hook", { opacity: 0, duration: 0.3, ease: "power2.in" }, 3.55);
+      tl.fromTo("#o-end-1", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 32.6);
+      tl.fromTo("#o-end-2", { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 33.0);
+      tl.fromTo("#o-logo-i", { opacity: 0, scale: 0.9 }, { opacity: 0.95, scale: 1, duration: 0.5, ease: "power3.out" }, 33.5);
+      tl.fromTo("#o-logo-r", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, 33.6);
+      tl.fromTo("#o-logo-t", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 33.75);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
