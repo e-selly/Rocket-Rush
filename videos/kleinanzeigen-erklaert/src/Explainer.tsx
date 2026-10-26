@@ -59,9 +59,12 @@ export const Explainer: React.FC = () => {
         <Sequence key={`s${c}`} name={`SFX Funkeln ${i + 1}`} from={c + 4} durationInFrames={2 * fps}><Audio src={staticFile("sparkle.mp3")} volume={0.22} /></Sequence>
       ))}
       <Sequence name="SFX Kostenlos" from={374} durationInFrames={2 * fps}><Audio src={staticFile("chime.mp3")} volume={0.3} /></Sequence>
-      <Sequence name="SFX Nachricht 1" from={575 + 27} durationInFrames={fps}><Audio src={staticFile("notification.mp3")} volume={0.3} /></Sequence>
+      <Sequence name="SFX Nachricht 1" from={575 + 15} durationInFrames={fps}><Audio src={staticFile("notification.mp3")} volume={0.3} /></Sequence>
       <Sequence name="SFX Nachricht 2" from={575 + 54} durationInFrames={fps}><Audio src={staticFile("notification.mp3")} volume={0.3} /></Sequence>
       <Sequence name="SFX Warnung" from={994} durationInFrames={fps}><Audio src={staticFile("error.mp3")} volume={0.28} /></Sequence>
+      <Sequence name="SFX Button" from={227 + 126} durationInFrames={fps}><Audio src={staticFile("click-soft.mp3")} volume={0.45} /></Sequence>
+      <Sequence name="SFX Antwort" from={575 + 72} durationInFrames={fps}><Audio src={staticFile("click-soft.mp3")} volume={0.3} /></Sequence>
+      <Sequence name="SFX Verkauft" from={1100 + 36} durationInFrames={2 * fps}><Audio src={staticFile("chime.mp3")} volume={0.35} /></Sequence>
     </AbsoluteFill>
   );
 };
