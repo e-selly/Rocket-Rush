@@ -1,0 +1,52 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: "Inter", sans-serif; color: #ffffff; }
+    .ov { position: absolute; left: 0; width: 1080px; text-align: center; }
+    .sh { text-shadow: 0 4px 26px rgba(0, 0, 0, 0.9), 0 0 3px rgba(0, 0, 0, 0.7); }
+    .hook { font-weight: 900; font-size: 86px; line-height: 1.04; letter-spacing: -0.005em; }
+    .ice { color: #a9c8ff; }
+    .tag { font-weight: 600; font-size: 66px; line-height: 1.1; letter-spacing: 0.12em; padding-left: 0.12em; }
+    .amber { color: #ffb547; }
+    .logo { display: inline-flex; flex-direction: column; align-items: center; gap: 18px; }
+    .logo-t { font-weight: 800; font-size: 46px; letter-spacing: 0.32em; padding-left: 0.32em; }
+    .logo-r { width: 380px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.85), rgba(255,255,255,0)); }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-duration="45">
+    <div id="o-t1" class="ov clip" data-start="2.0" data-duration="3.2" data-track-index="2" style="top: 250px">
+      <div id="o-t1-a" class="tag sh">DU BIST PLÖTZLICH</div>
+      <div id="o-t1-b" class="tag sh ice">DAS PROBLEM</div>
+    </div>
+    <div id="o-t2" class="ov clip" data-start="12.6" data-duration="3.4" data-track-index="2" style="top: 230px">
+      <div id="o-t2-a" class="tag sh">SIE VERDREHEN</div>
+      <div id="o-t2-b" class="tag sh ice">DIE GESCHICHTE</div>
+    </div>
+    <div id="o-t3" class="ov clip" data-start="33.4" data-duration="4.0" data-track-index="2" style="top: 250px">
+      <div id="o-t3-a" class="tag sh">MANCHMAL IST GEHEN</div>
+      <div id="o-t3-b" class="tag sh amber">DIE ANTWORT</div>
+    </div>
+    <div id="o-logo" class="ov clip" data-start="42.9" data-duration="2.1" data-track-index="3" style="top: 1180px">
+      <div class="logo">
+        <svg id="o-logo-i" width="64" height="76" viewBox="0 0 64 76"><path d="M32 3 C14 3 5 16 5 34 C5 55 18 73 32 73 C46 73 59 55 59 34 C59 16 50 3 32 3 Z" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="21" cy="33" rx="7" ry="3.6" fill="#fff"/><ellipse cx="43" cy="33" rx="7" ry="3.6" fill="#fff"/><path d="M32 3 L32 73" stroke="#fff" stroke-width="2" stroke-dasharray="4 5"/></svg>
+        <div id="o-logo-r" class="logo-r"></div>
+        <div id="o-logo-t" class="logo-t sh">MASKEN ABNEHMEN</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const show = (a, b, at, end) => {
+        tl.fromTo(a, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, at);
+        tl.fromTo(b, { opacity: 0, y: 10, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, at + 0.35);
+        tl.to([a, b], { opacity: 0, duration: 0.3, ease: "power2.in" }, end - 0.3);
+      };
+      show("#o-t1-a", "#o-t1-b", 2.0, 5.2);
+      show("#o-t2-a", "#o-t2-b", 12.6, 16.0);
+      show("#o-t3-a", "#o-t3-b", 33.4, 37.4);
+      tl.fromTo("#o-logo-i", { opacity: 0, scale: 0.9 }, { opacity: 0.95, scale: 1, duration: 0.5, ease: "power3.out" }, 42.9);
+      tl.fromTo("#o-logo-r", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, 43.0);
+      tl.fromTo("#o-logo-t", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 43.15);
+      window.__timelines["overlays"] = tl;
+    })();
+  </script>
+</template>
