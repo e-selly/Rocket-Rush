@@ -2,13 +2,13 @@ import { AbsoluteFill, Easing, Img, Sequence, interpolate, staticFile, useCurren
 import { Audio } from "@remotion/media";
 import captions from "./captions.json";
 
-const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-const ease = Easing.bezier(0.16, 1, 0.3, 1);
-const GOLD = "#e3c27a";
-const SANS = "Inter, sans-serif";
-const SERIF = "'Playfair Display', serif";
-const rise = (f: number, a: number, d = 14) => interpolate(f, [a, a + d], [0, 1], { ...clamp, easing: ease });
-const shadow = "0 4px 30px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.5)";
+export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+export const ease = Easing.bezier(0.16, 1, 0.3, 1);
+export const GOLD = "#e3c27a";
+export const SANS = "Inter, sans-serif";
+export const SERIF = "'Playfair Display', serif";
+export const rise = (f: number, a: number, d = 14) => interpolate(f, [a, a + d], [0, 1], { ...clamp, easing: ease });
+export const shadow = "0 4px 30px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.5)";
 
 // ---------- building blocks ----------
 
@@ -62,7 +62,7 @@ const Showroom: React.FC<{ car: string; dir?: 1 | -1; width?: number }> = ({ car
 };
 
 // soft light sweep across the frame (premium shine)
-const Sweep: React.FC<{ at: number }> = ({ at }) => {
+export const Sweep: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
   const u = interpolate(f, [at, at + 22], [-0.3, 1.3], clamp);
   if (u <= -0.3 || u >= 1.3) return null;
@@ -70,7 +70,7 @@ const Sweep: React.FC<{ at: number }> = ({ at }) => {
 };
 
 // shot wrapper: slides/blur-whips in and out
-const Shot: React.FC<{ children: React.ReactNode; dir?: 1 | -1; whip?: boolean }> = ({ children, dir = 1, whip = true }) => {
+export const Shot: React.FC<{ children: React.ReactNode; dir?: 1 | -1; whip?: boolean }> = ({ children, dir = 1, whip = true }) => {
   const f = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const a = interpolate(f, [0, 8], [0, 1], { ...clamp, easing: ease });
@@ -80,7 +80,7 @@ const Shot: React.FC<{ children: React.ReactNode; dir?: 1 | -1; whip?: boolean }
   return <AbsoluteFill style={{ opacity: Math.min(1, a * 1.4) * (1 - b * 0.6), translate: `${x}px 0px`, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>{children}</AbsoluteFill>;
 };
 
-const ModelLabel: React.FC<{ brand: string; model: string; top?: number }> = ({ brand, model, top = 175 }) => {
+export const ModelLabel: React.FC<{ brand: string; model: string; top?: number }> = ({ brand, model, top = 175 }) => {
   const f = useCurrentFrame();
   const a = rise(f, 6), b = rise(f, 10);
   return (
@@ -92,7 +92,7 @@ const ModelLabel: React.FC<{ brand: string; model: string; top?: number }> = ({ 
   );
 };
 
-const PriceTag: React.FC<{ price: string; model: string }> = ({ price, model }) => {
+export const PriceTag: React.FC<{ price: string; model: string }> = ({ price, model }) => {
   const f = useCurrentFrame();
   const a = rise(f, 4), b = interpolate(f, [8, 18], [0, 1], { ...clamp, easing: Easing.bezier(0.34, 1.56, 0.64, 1) });
   return (
@@ -159,7 +159,7 @@ const PRICES: { photo?: string; model: string; price: string }[] = [
   { photo: "bmw5", model: "BMW 540d", price: "135" },
 ];
 
-const Benefit: React.FC<{ text: string; at: number; idx: number }> = ({ text, at, idx }) => {
+export const Benefit: React.FC<{ text: string; at: number; idx: number }> = ({ text, at, idx }) => {
   const f = useCurrentFrame();
   const a = rise(f, at, 12);
   return (
@@ -200,12 +200,12 @@ const Finale: React.FC = () => {
   );
 };
 
-const EndCard: React.FC = () => {
+export const EndCard: React.FC<{ bg?: React.ReactNode }> = ({ bg }) => {
   const f = useCurrentFrame();
   const pulse = 1 + 0.03 * Math.sin(f / 5);
   return (
     <AbsoluteFill style={{ fontFamily: SANS, color: "#fff" }}>
-      <Img src={staticFile("photos/see-glb-gold.jpg")} style={{ position: "absolute", inset: -80, width: "calc(100% + 160px)", height: "calc(100% + 160px)", objectFit: "cover", filter: "blur(26px) brightness(0.32)" }} />
+      {bg ?? <Img src={staticFile("photos/see-glb-gold.jpg")} style={{ position: "absolute", inset: -80, width: "calc(100% + 160px)", height: "calc(100% + 160px)", objectFit: "cover", filter: "blur(26px) brightness(0.32)" }} />}
       <AbsoluteFill style={{ alignItems: "center", textAlign: "center", paddingTop: 300 }}>
         <div style={{ opacity: rise(f, 2), width: 140 * rise(f, 2), height: 3, background: GOLD }} />
         <div style={{ opacity: rise(f, 4), marginTop: 34, fontFamily: SERIF, fontWeight: 700, fontSize: 84, lineHeight: 1.08 }}>AUTOVERMIETUNG<br />AM TEGERNSEE</div>
@@ -224,7 +224,7 @@ const EndCard: React.FC = () => {
 
 type Word = { t: string; s: number; e: number };
 type Group = { start: number; end: number; words: Word[] };
-const Captions: React.FC = () => {
+export const Captions: React.FC = () => {
   const f = useCurrentFrame(); const { fps } = useVideoConfig(); const t = f / fps;
   const g = (captions as Group[]).find((c) => t >= c.start && t < c.end);
   if (!g) return null;
