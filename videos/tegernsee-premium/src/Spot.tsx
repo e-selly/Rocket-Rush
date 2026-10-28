@@ -222,8 +222,8 @@ export const EndCard: React.FC<{ bg?: React.ReactNode }> = ({ bg }) => {
   );
 };
 
-type Word = { t: string; s: number; e: number };
-type Group = { start: number; end: number; words: Word[] };
+export type Word = { t: string; s: number; e: number };
+export type Group = { start: number; end: number; words: Word[] };
 export const Captions: React.FC = () => {
   const f = useCurrentFrame(); const { fps } = useVideoConfig(); const t = f / fps;
   const g = (captions as Group[]).find((c) => t >= c.start && t < c.end);

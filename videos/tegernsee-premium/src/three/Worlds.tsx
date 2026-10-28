@@ -132,7 +132,7 @@ export const ShowroomWorld: React.FC<{ radius: number; children?: React.ReactNod
 
 export const HOUSE_A = 3.6;
 // ---------- diorama: round lake, ring road, low-poly peaks, a house with a delivery pin ----------
-export const Diorama: React.FC<{ children?: React.ReactNode; trail: number; trailStart: number; pin: number; people: number }> = ({ children, trail, trailStart, pin, people }) => {
+export const Diorama: React.FC<{ children?: React.ReactNode; trail: number; trailStart: number; pin: number; pinY?: number; ripple?: number; people: number }> = ({ children, trail, trailStart, pin, pinY = 0, ripple = 0, people }) => {
   const lakeGeo = useMemo(() => new THREE.CircleGeometry(5.6, 64), []);
   const peaks = useMemo(() => {
     const r = rng(11); const p: { a: number; d: number; h: number; s: number; c: string }[] = [];
@@ -180,7 +180,13 @@ export const Diorama: React.FC<{ children?: React.ReactNode; trail: number; trai
       <group position={[Math.sin(ha) * 8.6, 0, Math.cos(ha) * 8.6]} rotation={[0, ha, 0]}>
         <mesh position={[0, 0.45, 0]}><boxGeometry args={[1.5, 0.9, 1.1]} /><meshStandardMaterial color="#efe6d6" /></mesh>
         <mesh position={[0, 1.15, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[1.12, 0.6, 4]} /><meshStandardMaterial color="#6b3a26" flatShading /></mesh>
-        <group position={[0, 2.3 + Math.sin(pin * 6) * 0.12 * (pin > 0 ? 1 : 0), 0]} scale={Math.min(1, pin * 3)}>
+        {ripple > 0 && ripple < 1 ? (
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]} scale={0.6 + ripple * 3.2}>
+            <ringGeometry args={[0.9, 1.0, 64]} />
+            <meshBasicMaterial color="#e3c27a" transparent opacity={1 - ripple} />
+          </mesh>
+        ) : null}
+        <group position={[0, 2.3 + pinY + Math.sin(pin * 6) * 0.12 * (pin > 1 ? 1 : 0), 0]} scale={pin > 0 ? 1 : 0}>
           <mesh position={[0, 0.35, 0]}><sphereGeometry args={[0.36, 24, 16]} /><meshStandardMaterial color="#e3c27a" emissive="#e3c27a" emissiveIntensity={0.6} metalness={0.4} roughness={0.3} /></mesh>
           <mesh position={[0, -0.05, 0]} rotation={[Math.PI, 0, 0]}><coneGeometry args={[0.3, 0.6, 20]} /><meshStandardMaterial color="#e3c27a" emissive="#e3c27a" emissiveIntensity={0.6} metalness={0.4} roughness={0.3} /></mesh>
           <mesh position={[0, 0.35, 0.3]}><sphereGeometry args={[0.13, 16, 12]} /><meshStandardMaterial color="#0b0d10" /></mesh>
