@@ -28,6 +28,39 @@ const Photo: React.FC<{ src: string; cover?: boolean; land?: boolean; zoom?: [nu
   );
 };
 
+// the real car, cut out of its photo and set into a lakeside showroom: soft lake backdrop, dark floor, contact shadow, reflection
+const Showroom: React.FC<{ car: string; dir?: 1 | -1; width?: number }> = ({ car, dir = 1, width = 1040 }) => {
+  const f = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const u = f / durationInFrames;
+  const s = interpolate(u, [0, 1], [1, 1.06]);
+  const x = interpolate(f, [0, 18], [70 * dir, 0], { ...clamp, easing: ease });
+  const bg = interpolate(u, [0, 1], [1.08, 1.0]);
+  const src = staticFile(`cut/${car}.png`);
+  const sweep = interpolate(f, [10, 34], [-40, 140], clamp);
+  const floor = 1420;
+  return (
+    <AbsoluteFill style={{ backgroundColor: "#0b0d10", overflow: "hidden" }}>
+      <Img src={staticFile("cut/lake-bg.jpg")} style={{ position: "absolute", left: 0, top: 0, width: 1080, height: 1138, objectFit: "cover", scale: bg, translate: `${-x * 0.3}px 0px`, filter: "brightness(0.62) saturate(0.95)",
+        maskImage: "linear-gradient(180deg, #000 0%, #000 72%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, #000 0%, #000 72%, transparent 100%)" }} />
+      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 24%, rgba(0,0,0,0.15) 48%, rgba(11,13,16,0.92) 62%, #0b0d10 76%)" }} />
+      <AbsoluteFill style={{ background: `radial-gradient(ellipse 620px 220px at 540px ${floor - 10}px, rgba(227,194,122,0.16), transparent 70%)` }} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: floor - 2, height: 2, background: `linear-gradient(90deg, transparent, rgba(227,194,122,0.35), transparent)` }} />
+      <div style={{ position: "absolute", left: 540 - width / 2, width, top: 0, height: 1920, translate: `${x}px 0px`, scale: s, transformOrigin: `50% ${floor}px` }}>
+        <div style={{ position: "absolute", left: width * 0.04, right: width * 0.04, top: floor - 34, height: 60, borderRadius: "50%", background: "rgba(0,0,0,0.85)", filter: "blur(18px)" }} />
+        <div style={{ position: "absolute", left: 0, width, bottom: 1920 - floor }}>
+          <Img src={src} style={{ display: "block", width }} />
+          <div style={{ position: "absolute", inset: 0, maskImage: `url(${src})`, WebkitMaskImage: `url(${src})`, maskSize: "100% 100%", WebkitMaskSize: "100% 100%",
+            background: `linear-gradient(105deg, transparent ${sweep - 14}%, rgba(255,240,215,0.32) ${sweep}%, transparent ${sweep + 14}%)`, mixBlendMode: "screen" }} />
+        </div>
+        <div style={{ position: "absolute", left: 0, width, top: floor, opacity: 0.22, maskImage: "linear-gradient(180deg, #000 0%, transparent 32%)", WebkitMaskImage: "linear-gradient(180deg, #000 0%, transparent 32%)" }}>
+          <Img src={src} style={{ display: "block", width, scale: "1 -1", filter: "blur(2px)" }} />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // soft light sweep across the frame (premium shine)
 const Sweep: React.FC<{ at: number }> = ({ at }) => {
   const f = useCurrentFrame();
@@ -112,18 +145,18 @@ const Opening: React.FC = () => {
 };
 
 const FLEET: { photo?: string; brand: string; model: string; zoom?: [number, number]; pan?: [number, number] }[] = [
-  { photo: "fuenfer-schwarz.jpg", brand: "BMW", model: "540d", zoom: [1.12, 1.02], pan: [30, -30] },
-  { photo: "x-grau-buero.jpg", brand: "BMW", model: "X5", zoom: [1.02, 1.12] },
-  { photo: "x-silber.jpg", brand: "BMW", model: "X3", zoom: [1.12, 1.03], pan: [-30, 20] },
+  { photo: "bmw5", brand: "BMW", model: "540d", zoom: [1.12, 1.02], pan: [30, -30] },
+  { photo: "x5", brand: "BMW", model: "X5", zoom: [1.02, 1.12] },
+  { photo: "x3", brand: "BMW", model: "X3", zoom: [1.12, 1.03], pan: [-30, 20] },
   { brand: "Mercedes-Benz", model: "GLC 4Matic" },
-  { photo: "golf-buero.jpg", brand: "Volkswagen", model: "Golf 8 R-Line", zoom: [1.03, 1.13] },
-  { photo: "troc-buero.jpg", brand: "Volkswagen", model: "T-Roc", zoom: [1.13, 1.03], pan: [20, -20] },
+  { photo: "golf", brand: "Volkswagen", model: "Golf 8 R-Line", zoom: [1.03, 1.13] },
+  { photo: "troc", brand: "Volkswagen", model: "T-Roc", zoom: [1.13, 1.03], pan: [20, -20] },
 ];
 const PRICES: { photo?: string; model: string; price: string }[] = [
-  { photo: "golf-buero.jpg", model: "VW Golf 8 R-Line", price: "99" },
-  { photo: "troc-buero.jpg", model: "VW T-Roc", price: "99" },
+  { photo: "golf", model: "VW Golf 8 R-Line", price: "99" },
+  { photo: "troc", model: "VW T-Roc", price: "99" },
   { model: "Mercedes-Benz GLC", price: "109" },
-  { photo: "fuenfer-schwarz.jpg", model: "BMW 540d", price: "135" },
+  { photo: "bmw5", model: "BMW 540d", price: "135" },
 ];
 
 const Benefit: React.FC<{ text: string; at: number; idx: number }> = ({ text, at, idx }) => {
@@ -142,7 +175,7 @@ const Benefits: React.FC = () => {
   const { fps } = useVideoConfig();
   return (
     <AbsoluteFill>
-      <Sequence durationInFrames={Math.round(4.6 * fps)} layout="none"><Photo src="glb-buero.jpg" zoom={[1.03, 1.12]} /></Sequence>
+      <Sequence durationInFrames={Math.round(4.6 * fps)} layout="none"><Showroom car="glb" width={940} /></Sequence>
       <Sequence from={Math.round(4.6 * fps)} layout="none"><Photo src="see-glb-gold.jpg" land zoom={[1.15, 1.28]} pan={[40, -20]} /></Sequence>
       <div style={{ position: "absolute", left: 80, right: 60, top: 165, fontFamily: SANS, textShadow: shadow }}>
         <Benefit text="Kostenlose Zustellung rund um den Tegernsee" at={0.4 * fps} idx={0} />
@@ -214,12 +247,12 @@ export const Spot: React.FC = () => {
       <Sequence name="Einstieg" from={0} durationInFrames={138}><Shot whip={false}><Opening /></Shot></Sequence>
       {FLEET.map((c, i) => (
         <Sequence key={c.model} name={`Flotte ${c.model}`} from={fleetStart + i * fleetLen} durationInFrames={fleetLen}>
-          <Shot dir={i % 2 ? -1 : 1}>{c.photo ? <><Photo src={c.photo} zoom={c.zoom} pan={c.pan} /><ModelLabel brand={c.brand} model={c.model} /></> : <TypeCard brand={c.brand} model={c.model} />}</Shot>
+          <Shot dir={i % 2 ? -1 : 1}>{c.photo ? <><Showroom car={c.photo} dir={i % 2 ? -1 : 1} /><ModelLabel brand={c.brand} model={c.model} /></> : <TypeCard brand={c.brand} model={c.model} />}</Shot>
         </Sequence>
       ))}
       {PRICES.map((c, i) => (
         <Sequence key={`p${c.model}`} name={`Preis ${c.model}`} from={priceStart + i * priceLen} durationInFrames={priceLen}>
-          <Shot dir={i % 2 ? -1 : 1}>{c.photo ? <><Photo src={c.photo} zoom={[1.06, 1.14]} /><PriceTag price={c.price} model={c.model} /></> : <TypeCard brand="Mercedes-Benz" model="GLC" price={c.price} />}</Shot>
+          <Shot dir={i % 2 ? -1 : 1}>{c.photo ? <><Showroom car={c.photo} dir={i % 2 ? -1 : 1} /><PriceTag price={c.price} model={c.model} /></> : <TypeCard brand="Mercedes-Benz" model="GLC" price={c.price} />}</Shot>
         </Sequence>
       ))}
       <Sequence name="Vorteile" from={630} durationInFrames={285}><Shot><Benefits /></Shot></Sequence>
