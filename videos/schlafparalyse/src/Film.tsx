@@ -93,7 +93,7 @@ const Title: React.FC = () => {
   const g = f < 14 || (f > 30 && f < 34) ? 1 : 0.25;
   const jx = Math.sin(f * 7.1) * 10 * g, jy = Math.cos(f * 5.3) * 4 * g;
   const word = "SCHLAFPARALYSE";
-  const txt = { fontFamily: SANS, fontWeight: 800, fontSize: 112, letterSpacing: "0.06em" } as const;
+  const txt = { fontFamily: SANS, fontWeight: 800, fontSize: 86, letterSpacing: "0.05em" } as const;
   return (
     <AbsoluteFill style={{ background: "#000", alignItems: "center", justifyContent: "center" }}>
       <div style={{ position: "relative", scale: 0.85 + 0.15 * p, opacity: p }}>
@@ -213,7 +213,7 @@ const Vignette: React.FC<{ beat: number }> = ({ beat }) => (
 
 // heartbeat strength over time (frames) → vignette pulse
 const heartAt = (f: number) => {
-  if (f < 365 || f > 622) return 0;
+  if (f < 365 || f > 556) return 0;
   const bpm = interpolate(f, [365, 560], [70, 120], clamp);
   const ph = ((f / 30) * bpm / 60) % 1;
   const k = interpolate(f, [365, 420, 560, 600], [0.3, 0.6, 1, 0.6], clamp);
@@ -229,7 +229,7 @@ const words = (marks as M[]).flatMap(([s, e, txt]) => {
 });
 const Captions: React.FC = () => {
   const f = useCurrentFrame(); const t = f / 30;
-  if ((f >= 566 && f < 622) || f >= 1182) return null;
+  if ((f >= 556 && f < 623) || f >= 1182) return null;
   const cur = words.findIndex((x) => t >= x.s - 0.05 && t < x.e + 0.35);
   if (cur < 0) return null;
   // show a chunk of up to 4 words around the current word, within the same sentence
@@ -272,13 +272,13 @@ export const Film: React.FC = () => {
       <Sequence name="3 POV Zimmer" from={264} durationInFrames={44}><POV lids look={[[0.1, 2.6, 0.3], [-1.6, 1.5, 0.5]]} /></Sequence>
       <Sequence name="4 POV Geräusche" from={308} durationInFrames={58}><POV look={[[-1.2, 1.4, -0.6], [1.15, 1.05, -3.2]]} /></Sequence>
       <Sequence name="5 Hände" from={366} durationInFrames={80}><HandClose effort={(k) => interpolate(k, [0, 20, 70], [0.2, 1, 1], clamp)} push={[0, 1]} /></Sequence>
-      <Sequence name="6 Gestalt" from={446} durationInFrames={120}>
+      <Sequence name="6 Gestalt" from={446} durationInFrames={110}>
         <POV shake={1} fov={50} look={[[1.05, 1.0, -3.2], [1.2, 1.05, -3.0]]} figure={(k) => ({ pos: [1.25, 0.98 + 0.0, interpolate(k, [0, 119], [-3.15, -2.75], clamp)], opacity: interpolate(k, [6, 70], [0, 0.95], clamp) })} />
       </Sequence>
-      <Sequence name="6b Sprung" from={566} durationInFrames={7}>
+      <Sequence name="6b Sprung" from={556} durationInFrames={7}>
         <POV shake={3} fov={50} look={[[1.0, 1.05, -2.0], [1.0, 1.05, -2.0]]} figure={() => ({ pos: [0.9, 1.0, -1.1], opacity: 1, scale: 1.0 })} />
       </Sequence>
-      <Sequence name="7 Titel" from={573} durationInFrames={50}><Title /></Sequence>
+      <Sequence name="7 Titel" from={563} durationInFrames={60}><Title /></Sequence>
       <Sequence name="8 Gehirn REM" from={623} durationInFrames={168}><BrainScene phase="rem" /></Sequence>
       <Sequence name="9 Gehirn real" from={791} durationInFrames={128}><BrainScene phase="real" /></Sequence>
       <Sequence name="10 Gestalt löst sich" from={919} durationInFrames={80}>
