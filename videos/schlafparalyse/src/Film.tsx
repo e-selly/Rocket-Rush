@@ -223,13 +223,15 @@ const heartAt = (f: number) => {
 // captions: white, key words in red, no box
 const KEY = /^(wach|bewegen|Augen|Zimmer|Geräusche|sprechen|Arme|dunkle|Gestalt|Schlafparalyse|Bewusstsein|Muskelblockade|REM-Schlafs|Gehirn|real|ungefährlich|beängstigend|Verrückte|passieren|Gedankenexperiment|früher)$/;
 type M = [number, number, string];
-const words = (marks as M[]).flatMap(([s, e, txt]) => {
+const toWords = (data: M[]) => data.flatMap(([s, e, txt]) => {
   const n = txt.length; let pos = 0;
   return txt.split(" ").map((w) => { const a = s + (e - s) * pos / n, b = s + (e - s) * (pos + w.length) / n; pos += w.length + 1; return { w, s: a + LEAD, e: b + LEAD, line: txt }; });
 });
-const Captions: React.FC = () => {
+const defaultWords = toWords(marks as M[]);
+export const Captions: React.FC<{ data?: M[]; hidden?: (f: number) => boolean }> = ({ data, hidden }) => {
   const f = useCurrentFrame(); const t = f / 30;
-  if ((f >= 556 && f < 623) || f >= 1182) return null;
+  const words = useMemo(() => (data ? toWords(data) : defaultWords), [data]);
+  if (hidden ? hidden(f) : (f >= 556 && f < 623) || f >= 1182) return null;
   const cur = words.findIndex((x) => t >= x.s - 0.05 && t < x.e + 0.35);
   if (cur < 0) return null;
   // show a chunk of up to 4 words around the current word, within the same sentence
@@ -261,7 +263,7 @@ const Fade: React.FC<{ from: number; to: number; at: number; dur: number; color?
 };
 
 // ---------------- timeline ----------------
-export const Film: React.FC = () => {
+export const Film: React.FC<{ withAudio?: boolean; withCaptions?: boolean }> = ({ withAudio = true, withCaptions = true }) => {
   const f = useCurrentFrame();
   const beat = heartAt(f);
   return (
@@ -296,9 +298,9 @@ export const Film: React.FC = () => {
       <Grain />
       <Fade from={1} to={0} at={0} dur={30} />
       <Fade from={0} to={1} at={TOTAL - 20} dur={20} />
-      <Captions />
-      <Sequence name="Stimme" from={Math.round(LEAD * FPS)}><Audio src={staticFile("voice.mp3")} /></Sequence>
-      <Audio src={staticFile("sound.wav")} />
+      {withCaptions ? <Captions /> : null}
+      {withAudio ? <Sequence name="Stimme" from={Math.round(LEAD * FPS)}><Audio src={staticFile("voice.mp3")} /></Sequence> : null}
+      {withAudio ? <Audio src={staticFile("sound.wav")} /> : null}
     </AbsoluteFill>
   );
 };

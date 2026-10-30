@@ -1,10 +1,13 @@
-import numpy as np, soundfile as sf, subprocess, io
+import numpy as np, soundfile as sf, subprocess, io, json, sys
 SR = 48000; FPS = 30; TOTAL = 1340
+EL = "--el" in sys.argv  # retime onto the ElevenLabs narration
+if EL:
+    WARP = json.load(open("src/warp.json")); TOTAL = WARP["total"]
 N = int(TOTAL / FPS * SR) + SR
 L = np.zeros(N); Rr = np.zeros(N)
 rng = np.random.default_rng(7)
 SFX = "/root/.claude/plugins/cache/hyperframes/hyperframes/0.8.195/skills/media-use/audio/assets/sfx/"
-fr = lambda f: int(f / FPS * SR)
+fr = (lambda f: int(np.interp(f, WARP['old'], WARP['new']) / FPS * SR)) if EL else (lambda f: int(f / FPS * SR))
 t_all = np.arange(N) / SR
 
 def add(sig, at, gain=1.0, pan=0.0):
@@ -113,7 +116,7 @@ add(load("impact-bass-1.mp3"), 1184, 0.22)
 add(load("click-soft.mp3"), 1220, 0.4)
 
 # duck everything under the narrator (voice starts 0.3 s in)
-vo = subprocess.run(["ffmpeg", "-v", "error", "-i", "public/voice.mp3", "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+vo = subprocess.run(["ffmpeg", "-v", "error", "-i", "public/voice_el.mp3" if EL else "public/voice.mp3", "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
 vo = np.abs(np.frombuffer(vo, dtype=np.float32).astype(np.float64))
 ve = np.zeros(N); o = int(0.3 * SR); ve[o:o + len(vo)] = vo[: N - o]
 win = int(0.08 * SR); ve = np.convolve(ve, np.ones(win) / win, mode="same")
@@ -123,5 +126,5 @@ duck = 1 - 0.6 * np.clip(ve, 0, 1)
 L *= duck; Rr *= duck
 mix = np.stack([L, Rr], 1)[: int(TOTAL / FPS * SR)]
 mix /= max(1e-9, np.abs(mix).max()) / 0.7
-sf.write("/home/user/Rocket-Rush/videos/schlafparalyse/public/sound.wav", mix.astype(np.float32), SR)
+sf.write("/home/user/Rocket-Rush/videos/schlafparalyse/public/" + ("sound_el.wav" if EL else "sound.wav"), mix.astype(np.float32), SR)
 print("ok", mix.shape[0] / SR)
