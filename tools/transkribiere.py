@@ -58,7 +58,7 @@ def main():
     segs = []
     pad = int(0.35 * SR)
     for start, samples in speech_segments(audio):
-        a0, a1 = max(0, start - pad), min(len(audio), start + len(samples) + pad // 2)
+        a0, a1 = max(0, start - pad), min(len(audio), start + len(samples) + pad)
         st = rec.create_stream(); st.accept_waveform(SR, audio[a0:a1]); rec.decode_stream(st)
         text = st.result.text.strip()
         if not text:
